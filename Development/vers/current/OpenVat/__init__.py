@@ -48,11 +48,10 @@ class OBJECT_PT_VAT_Calculator(bpy.types.Panel):
             layout.label(text=f"Vertex Count: {len(obj.data.vertices)}, Frame Range: {context.scene.frame_start} - {context.scene.frame_end}")
             layout.label(text=f"Output Resolution: {str(width)} x {str(height)}")
             
-#            layout.label(text=str(width) + "x" + str(height))
-            
             
             layout.prop(context.scene, "vat_output_directory")
             layout.prop(context.scene, "vat_object_space", text="Vertex Normals")
+            layout.prop(context.scene, "vat_custom_proxy")
 
             layout.operator("object.calculate_vat_resolution", text="Create VAT")
         else:
@@ -65,7 +64,7 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
     def execute(self, context):
         outDir = bpy.context.scene.vat_output_directory
         
-        if outDir == "//OpenVat":
+        if outDir == "/tmp//":
             outDir = os.path.join(os.path.dirname(bpy.data.filepath), "openVAT")
             
         obj = context.view_layer.objects.active
@@ -74,6 +73,8 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         frame_start = context.scene.frame_start
         frame_end = context.scene.frame_end
         object_space = context.scene.vat_object_space
+        custom_proxy = context.scene.vat_custom_proxy
+        
 
         blend_filepath = bpy.data.filepath
         export_directory = bpy.path.abspath(context.scene.vat_output_directory)
@@ -97,23 +98,55 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         ensure_node_group("ov_calculate-position-vs")
 #        ensure_node_group("ov_calculate-position-os")
         
-        temp_obj = obj.copy()
-        temp_obj.data = obj.data.copy()
-        context.scene.collection.objects.link(temp_obj)
-        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        temp_obj = None
+        
+        if custom_proxy == False:
+            temp_obj = obj.copy()
+            temp_obj.data = obj.data.copy()
+            context.scene.frame_current = frame_start
+            context.scene.collection.objects.link(temp_obj)
+            for modifier in temp_obj.modifiers[:]:
+                apply_modifier(temp_obj, modifier)
+        else:
+            selected_objects = bpy.context.selected_objects
+
+            # Check if exactly two objects are selected
+            if len(selected_objects) == 2:
+                # Get the active object
+                active_object = bpy.context.active_object
+                
+                # Identify the selected (non-active) object
+                selected_non_active_object = None
+                
+                for object in selected_objects:
+                    if object != active_object:
+                        temp_obj = object
+                        break
+                
+                if temp_obj:
+                    print("Selected (non-active) object:", temp_obj.name)
+                else:
+                    print("No selected (non-active) object found.")               
+            else:
+                print("Exactly two objects must be selected.")
+
+        if temp_obj == None:
+            return {'FINISHED'}
+        
+#        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
         bpy.ops.object.select_all(action='DESELECT')
+        
         context.view_layer.objects.active = obj
         obj.select_set(True)
-        bpy.ops.object.modifier_add(type='NODES')
+        
+        positionNodes = bpy.ops.object.modifier_add(type='NODES')
+        obj.modifiers[-1].name  = "positionCalculation"
         obj.modifiers[-1].node_group = bpy.data.node_groups["ov_generated-pos"]
         obj.modifiers[-1]["Socket_3"] = temp_obj
-        context.scene.frame_current = frame_start
-        for modifier in temp_obj.modifiers[:]:
-            apply_modifier(temp_obj, modifier)
 
         # Execute the main VAT calculation and export process
         main(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath)
-
+        
         min_x, min_y, min_z, max_x, max_y, max_z = read_remap_info(remap_output_filepath)
         context.scene['min_x'] = min_x
         context.scene['min_y'] = min_y
@@ -124,6 +157,7 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
 
         self.report({'INFO'}, "VAT Calculation Completed")
         
+        context.scene.frame_current = frame_start
         num_vertices = len(obj.data.vertices)
         frame_start = context.scene.frame_start
         frame_end = context.scene.frame_end
@@ -131,12 +165,19 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
 
         width, height, num_wraps = calculate_optimal_vat_resolution(num_vertices, num_frames)
         
-        setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space)
         
-
-        bpy.data.objects.remove(temp_obj)
+        setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, temp_obj)
+        
+        if custom_proxy == False:
+            bpy.data.objects.remove(temp_obj)
         bpy.data.scenes.remove(bpy.data.scenes[obj.name + "_proxy_scene"])
         bpy.data.scenes.remove(bpy.data.scenes[obj.name + "_vat"])
+        
+        bpy.ops.object.select_all(action='DESELECT')
+        
+        obj.select_set(True)
+        bpy.context.view_layer.objects.active = obj
+        bpy.ops.object.modifier_remove(modifier="positionCalculation")
     
 
         return {'FINISHED'}
@@ -206,7 +247,7 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
     tracker_plane.modifiers["GeometryNodes"]["Socket_14"] = original_scene['min_z']
     tracker_plane.modifiers["GeometryNodes"]["Socket_15"] = original_scene['max_z']
         
-def setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space):
+def setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, temp_obj):
     original_scene = bpy.context.scene
     bpy.ops.scene.new(type='NEW')
     proxy_scene = bpy.context.scene
@@ -215,15 +256,15 @@ def setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space):
     proxy_scene.frame_end = num_frames - 1
     proxy_scene.frame_start = 0
 
-    proxy_obj = obj.copy()
-    proxy_obj.data = obj.data.copy()
+    proxy_obj = temp_obj.copy()
+    proxy_obj.data = temp_obj.data.copy()
     proxy_scene.collection.objects.link(proxy_obj)
 
     bpy.context.view_layer.objects.active = proxy_obj
     proxy_obj.select_set(True)
 
     for modifier in proxy_obj.modifiers[:]:
-        proxy_obj.modifiers.remove(modifier)
+        apply_modifier(proxy_obj, modifier)
 
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
@@ -553,6 +594,11 @@ def register():
         description="Exports an additional map containing animated vertex normal data",
         default=False
     )
+    bpy.types.Scene.vat_custom_proxy = bpy.props.BoolProperty(
+        name="Use Custom Proxy",
+        description="Selected object acts as proxy to active object. If False, uses frame 1 as proxy deformation",
+        default=False
+    )
     bpy.utils.register_class(OBJECT_PT_VAT_Calculator)
     bpy.utils.register_class(OBJECT_OT_CalculateVATResolution)
 
@@ -561,6 +607,7 @@ def unregister():
     bpy.utils.unregister_class(OBJECT_OT_CalculateVATResolution)
     del bpy.types.Scene.vat_output_directory
     del bpy.types.Scene.vat_object_space
+    del bpy.types.Scene.vat_custom_proxy
 
 if __name__ == "__main__":
     register()
