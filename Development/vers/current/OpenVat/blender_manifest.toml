@@ -1,7 +1,7 @@
-schema_version = "1.0.0"
+schema_version = "1.0.1"
 
 id = "openvat"
-version = "1.0.0"
+version = "1.0.1"
 name = "OpenVAT"
 tagline = "Encode and preview vertex animated textures for Unity/Unreal"
 maintainer = "Luke Stilson <stilson.luke@gmail.com>"
