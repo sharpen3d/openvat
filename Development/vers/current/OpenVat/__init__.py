@@ -54,6 +54,7 @@ class OBJECT_PT_VAT_Calculator(bpy.types.Panel):
 class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
     bl_idname = "object.calculate_vat_resolution"
     bl_label = "Calculate VAT Resolution"
+    bl_description = "Export a VAT (.PNG), Sidecar Data(.JSON) and model (.FBX) with VAT-accessiable UV layer to the defined Export location"
 
     def execute(self, context):
         outDir = bpy.context.scene.vat_output_directory
@@ -537,6 +538,7 @@ def main(obj_name, attribute_name, frame_start, frame_end, output_filepath, rema
         return
 
     all_frames_data = {}
+    frames = frame_end - frame_start + 1
 
     for frame in range(frame_start, frame_end + 1):
         bpy.context.scene.frame_set(frame)
@@ -553,7 +555,8 @@ def main(obj_name, attribute_name, frame_start, frame_end, output_filepath, rema
     remap_info = {
         "os-remap": {
             "Min": overall_min,
-            "Max": overall_max
+            "Max": overall_max,
+            "Frames": frames
         }
     }
     write_json(remap_info, remap_output_filepath)
@@ -582,8 +585,8 @@ def apply_modifier(obj, modifier):
 def register():
     bpy.types.Scene.vat_output_directory = bpy.props.StringProperty(
         name="Output Directory",
-        description="Directory to save VAT files",
-        default="/tmp\\"
+        description="Directory to save exported content (must be an absolute path)",
+        default="DEFINE_YOUR_PATH_HERE"
     )
     bpy.types.Scene.vat_object_space = bpy.props.BoolProperty(
         name="Object Space",
