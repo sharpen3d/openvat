@@ -4,14 +4,7 @@ import math
 import os
 import json
 
-bl_info = {
-    "name": "OpenVAT",
-    "blender": (4, 1, 1),
-    "category": "Object",
-}
 
-
-# Path to the .blend file containing the node groups
 NODE_GROUPS_BLEND_FILE = os.path.join(os.path.dirname(__file__), "vat_node_groups.blend")
 
 
@@ -52,6 +45,7 @@ class OBJECT_PT_VAT_Calculator(bpy.types.Panel):
             layout.prop(context.scene, "vat_output_directory")
             layout.prop(context.scene, "vat_object_space", text="Vertex Normals")
             layout.prop(context.scene, "vat_custom_proxy")
+            layout.prop(context.scene, "vat_debug_mode")
 
             layout.operator("object.calculate_vat_resolution", text="Create VAT")
         else:
@@ -74,6 +68,7 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         frame_end = context.scene.frame_end
         object_space = context.scene.vat_object_space
         custom_proxy = context.scene.vat_custom_proxy
+        debug_mode = context.scene.vat_debug_mode
         
 
         blend_filepath = bpy.data.filepath
@@ -168,10 +163,11 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         
         setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, temp_obj)
         
-        if custom_proxy == False:
-            bpy.data.objects.remove(temp_obj)
-        bpy.data.scenes.remove(bpy.data.scenes[obj.name + "_proxy_scene"])
-        bpy.data.scenes.remove(bpy.data.scenes[obj.name + "_vat"])
+        if debug_mode == False:
+            if custom_proxy == False:
+                bpy.data.objects.remove(temp_obj)
+            bpy.data.scenes.remove(bpy.data.scenes[obj.name + "_proxy_scene"])
+            bpy.data.scenes.remove(bpy.data.scenes[obj.name + "_vat"])
         
         bpy.ops.object.select_all(action='DESELECT')
         
@@ -597,6 +593,11 @@ def register():
     bpy.types.Scene.vat_custom_proxy = bpy.props.BoolProperty(
         name="Use Custom Proxy",
         description="Selected object acts as proxy to active object. If False, uses frame 1 as proxy deformation",
+        default=False
+    )
+    bpy.types.Scene.vat_debug_mode = bpy.props.BoolProperty(
+        name="Debug",
+        description="Keeps the resulting work used to create the VAT (Proxy Scene, VAT-Tracker Scene)",
         default=False
     )
     bpy.utils.register_class(OBJECT_PT_VAT_Calculator)
