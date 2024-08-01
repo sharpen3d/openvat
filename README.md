@@ -48,5 +48,31 @@ The main VAT creation operations, currently this is a blanket single operator "C
 
 Immediately after VAT creation, a new object will be added to the scene as a copy of the proxy object with all modifiers stripped and the decoder modifier added. This will be added in the exact location as the active_object and is unselected by default. Hide or move the original and scrub the timeline or play the scene to see the vertex-encoded animation play.
 
-        
+### Engine Support
+  - Unity Engine URP support and examples for OpenVat exist, but need documentation and walk-throughs.
+
+- **Adding the Unity Package**
+  - In Unity's package manager, click "Add from Git URL" and paste https://github.com/sharpen3d/openvat-unity.git. This installs OpenVat into Packages of your project, including a custom window for automatic standard setup for basic and PBR usage.
+    1. After package is sucessfully installed, Find the custom panel under "Tools > OpenVAT"
+    2. Import the entire folder that was created when exporting your VAT via the OpenVAT blender Extension *including the json sidecar data*. 
+    3. Point the Folder Path variable to the location of this folder within your Assets (will be something like Assets/myObject - always starting with "Assets/")
+    4. **Optional:** Add standard PBR maps (if available) for your content - Basecolor, Roughness, Metalness, Normal, Emission, Ambient Occlusion *make sure to name maps approprately, see note below*
+    5. Press Process OpenVAT Content - Results in Prefab and Material being created in the same folder, with an automatically looping animation (at default speed) of your content
+
+**PBR NAMING**
+  - If PBR maps are included, use recognized PBR naming to let the script automatically apply these textures to your model
+  - These need to be in the same folder as the VAT content (the folder named your object name)
+  - PBR textures can always be added to the openVAT_decoder shader. If no PBR maps are found in your object folder, openVAT_decoder_basic shader is used (solid color) - to add maps, swap the shader to openVAT_decoder, then you can manually place maps in any of the slots
+
+Recognized naming conventions:
+basecolor = "_basecolor", "_albedo"
+normal = "_nrml", "_normal"
+roughness = "_roug", "_roughness"
+metallic = "_metl", "_metallic"
+ambient occlusion = "_ao", "_ambient", "_occlusion"
+emission = "_emis", "_emission"
+
+- **Notes**
+  - Vertex Normals (VNRM) are in an Experimental/Testing phase for unity and **may not work** at this time, these are disabled in the standard openVAT_decoder_basic, but are enabled in the PBR-accepting openVAT_decoder for testing purposes. Leaving VNRM blank in your material will have no adverse consequences.
+  
   
