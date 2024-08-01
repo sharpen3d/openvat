@@ -1,12 +1,23 @@
+"""
+Title: OpenVAT Encoder
+Description: Encode and preview vertex animation textures
+Author: Nicole
+Date: YYYY-MM-DD
+Version: 1.0.2
+
+Usage:
+    python __init__.py [openvatencoder.py source content]
+"""
+
 import bpy
 import bmesh
 import math
 import os
 import json
 
-
+# File containing necessicary Node groups, appended when needed in code.
+# Methods for appending consolidated here for development purposes
 NODE_GROUPS_BLEND_FILE = os.path.join(os.path.dirname(__file__), "vat_node_groups.blend")
-
 
 def append_node_group(group_name):
     with bpy.data.libraries.load(NODE_GROUPS_BLEND_FILE, link=False) as (data_from, data_to):
@@ -17,9 +28,11 @@ def ensure_node_group(group_name):
     if group_name not in bpy.data.node_groups:
         append_node_group(group_name)
 
+
+# Main Panel
 class OBJECT_PT_VAT_Calculator(bpy.types.Panel):
     bl_idname = "OBJECT_PT_vat_calculator"
-    bl_label = "VAT Calculator"
+    bl_label = "Vertex Animation Encoding"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_category = 'OpenVAT'
@@ -29,28 +42,63 @@ class OBJECT_PT_VAT_Calculator(bpy.types.Panel):
         obj = context.object
 
         if obj and obj.type == 'MESH':
+            
+            layout.label(text=f"Object To Encode: {obj.name}", icon='MOD_DATA_TRANSFER')
+            layout.label(text=f"Vertex Count: {len(obj.data.vertices)}, Frame Range: {context.scene.frame_start} - {context.scene.frame_end}")
+            
+            #realtime info - possibly move to button press
             num_vertices = len(obj.data.vertices)
             frame_start = context.scene.frame_start
             frame_end = context.scene.frame_end
             num_frames = frame_end - frame_start + 1
+            
+            if frame_start == 1:
+            
+                if context.scene.vat_pack_normals:
+                    width, height, num_wraps = calculate_packed_vat_resolution(num_vertices, num_frames)
+                else:
+                    width, height, num_wraps = calculate_optimal_vat_resolution(num_vertices, num_frames)
+                    
 
-            width, height, num_wraps = calculate_optimal_vat_resolution(num_vertices, num_frames)
-            
-            
-            layout.label(text=f"Active Object: {obj.name}")
-            layout.label(text=f"Vertex Count: {len(obj.data.vertices)}, Frame Range: {context.scene.frame_start} - {context.scene.frame_end}")
-            layout.label(text=f"Output Resolution: {str(width)} x {str(height)}")
-            
-            
-            layout.prop(context.scene, "vat_output_directory")
-            layout.prop(context.scene, "vat_object_space", text="Vertex Normals")
-            layout.prop(context.scene, "vat_custom_proxy")
-            layout.prop(context.scene, "vat_debug_mode")
+                
+                layout.label(text=f"Output Resolution: {str(width)} x {str(height)}")
+                row = layout.row()
+                row = layout.row()
+                layout.label(text=f"Output Directory:", icon='OUTPUT')
+                layout.prop(context.scene, "vat_output_directory", text="")
+                
+                
+                # For user visibility, only allow Vertex Normals or Packed Normals
+                separate = context.scene.vat_object_space
+                packed = context.scene.vat_pack_normals
+                
+                row = layout.row()
+                row = layout.row()
+                layout.label(text=f"Vertex Normals Handling", icon="NORMALS_VERTEX")
+                row = layout.row(align=True)
+                row.prop(context.scene, "vat_object_space", text="Separate Map")
+                row.prop(context.scene, "vat_pack_normals", text="Packed")
+                
+                if separate:
+                    packed = False
+                if packed:
+                    separate = False
+                
+                # Execute Button
+                # Likely to Expand to more granular options, but is monolythic currently with a few options
+                row = layout.row()
+                row = layout.row()
+                layout.label(text=f"Execute Options", icon="SCRIPT")
+                layout.prop(context.scene, "vat_custom_proxy")
+                layout.prop(context.scene, "vat_cleanup_enabled")
 
-            layout.operator("object.calculate_vat_resolution", text="Create VAT")
+                layout.operator("object.calculate_vat_resolution", text="Create VAT")
+            else:
+                layout.label(text=f"Currently all encoding must start at frame 1")
         else:
             layout.label(text="No active mesh object selected")
 
+# Main Operation
 class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
     bl_idname = "object.calculate_vat_resolution"
     bl_label = "Calculate VAT Resolution"
@@ -69,7 +117,8 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         frame_end = context.scene.frame_end
         object_space = context.scene.vat_object_space
         custom_proxy = context.scene.vat_custom_proxy
-        debug_mode = context.scene.vat_debug_mode
+        debug_mode = context.scene.vat_cleanup_enabled
+        pack_normals = context.scene.vat_pack_normals
         
 
         blend_filepath = bpy.data.filepath
@@ -87,12 +136,9 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         remap_output_filepath = os.path.join(object_directory, f"{obj_name}-remap_info.json")
 
         # Ensure the required node groups are available
-#        ensure_node_group("ov_encode-from")
         ensure_node_group("ov_generated-pos")
-#        ensure_node_group("ov_vat-decoder-os")
         ensure_node_group("ov_vat-decoder-vs")
         ensure_node_group("ov_calculate-position-vs")
-#        ensure_node_group("ov_calculate-position-os")
         
         temp_obj = None
         
@@ -141,7 +187,7 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         obj.modifiers[-1]["Socket_3"] = temp_obj
 
         # Execute the main VAT calculation and export process
-        main(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath)
+        make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath)
         
         min_x, min_y, min_z, max_x, max_y, max_z = read_remap_info(remap_output_filepath)
         context.scene['min_x'] = min_x
@@ -151,34 +197,42 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         context.scene['max_y'] = max_y
         context.scene['max_z'] = max_z
 
-        self.report({'INFO'}, "VAT Calculation Completed")
+        self.report({'INFO'}, "VAT Encoding Completed")
         
         context.scene.frame_current = frame_start
         num_vertices = len(obj.data.vertices)
         frame_start = context.scene.frame_start
         frame_end = context.scene.frame_end
         num_frames = frame_end - frame_start + 1
-
-        width, height, num_wraps = calculate_optimal_vat_resolution(num_vertices, num_frames)
         
         
-        setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, temp_obj)
+        if context.scene.vat_pack_normals:
+            width, height, num_wraps = calculate_packed_vat_resolution(num_vertices, num_frames)   
+        else:
+            width, height, num_wraps = calculate_optimal_vat_resolution(num_vertices, num_frames)   
+        setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, temp_obj, pack_normals)
         
-        if debug_mode == False:
+        if debug_mode == True:
+            print("Cleaning up temporary node_groups, objects, and modifiers")
             if custom_proxy == False:
                 bpy.data.objects.remove(temp_obj)
             bpy.data.scenes.remove(bpy.data.scenes[obj.name + "_proxy_scene"])
             bpy.data.scenes.remove(bpy.data.scenes[obj.name + "_vat"])
+            bpy.ops.outliner.orphans_purge()
         
         bpy.ops.object.select_all(action='DESELECT')
         
         obj.select_set(True)
         bpy.context.view_layer.objects.active = obj
         bpy.ops.object.modifier_remove(modifier="positionCalculation")
+        
+        print("VAT Encoding Finished")
+        print("Thank you for using OPENVAT - Your favorite Vertex Animation Encoder - Developed by Luke Stilson 2024 - Visit www.lukestilson.com for more information")
     
-
         return {'FINISHED'}
 
+
+# Calculations and Sub-Functions
 def calculate_optimal_vat_resolution(num_vertices, num_frames):
     total_pixels = num_vertices * num_frames
     approx_side = math.sqrt(total_pixels)
@@ -198,6 +252,49 @@ def calculate_optimal_vat_resolution(num_vertices, num_frames):
     num_wraps = math.ceil(num_vertices / width)
 
     return (width, height, num_wraps)
+
+def calculate_packed_vat_resolution(num_vertices, num_frames):
+    total_pixels = num_vertices * num_frames
+
+    def closest_power_of_2(n):
+        return 2 ** math.floor(math.log2(n))
+
+    def next_power_of_2(n):
+        return 2 ** math.ceil(math.log2(n))
+
+    approx_side = math.sqrt(total_pixels)
+    width = closest_power_of_2(approx_side)
+    height = closest_power_of_2(approx_side)
+
+    while width * height < total_pixels:
+        if width < height:
+            width *= 2
+        else:
+            height *= 2
+
+    num_wraps = math.ceil(num_vertices / width)
+    additional_rows_for_normals = num_wraps
+
+    height_with_normals = height + additional_rows_for_normals
+    height = next_power_of_2(height_with_normals)
+    
+    if height > width * 2:
+        height /= 2
+        width *= 2
+        
+    num_wraps = math.ceil(num_vertices / width)
+        
+    if ((num_wraps * 2) * num_frames) > height:
+        if width < height:
+            width *= 2
+        else:
+            height *= 2
+        
+    width = int(width)
+    height = int(height)
+
+    return (width, height, num_wraps)
+
 
 def create_uv_map(obj, screen_width, screen_height, frames):
     bpy.ops.object.mode_set(mode='EDIT')
@@ -224,7 +321,8 @@ def create_uv_map(obj, screen_width, screen_height, frames):
     bpy.ops.object.mode_set(mode='OBJECT')
     obj.data.uv_layers.active_index = len(obj.data.uv_layers) - 1
 
-def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps, proxy_name, original_scene, nodegroup_method):
+# The bulk of the encoding computation happens within an appended geometry node group. The following code defines properties to set up the geometry nodes to capture data
+def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps, proxy_name, original_scene, nodegroup_method, pack_normals):
     bpy.ops.mesh.primitive_plane_add(location=(0, 5, 0))
     tracker_plane = bpy.context.object
     tracker_plane.name = f"{obj_name}_vat-tracking"
@@ -243,8 +341,16 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
     tracker_plane.modifiers["GeometryNodes"]["Socket_13"] = original_scene['max_y']
     tracker_plane.modifiers["GeometryNodes"]["Socket_14"] = original_scene['min_z']
     tracker_plane.modifiers["GeometryNodes"]["Socket_15"] = original_scene['max_z']
+    
+    if pack_normals:
+        normal_tracker = tracker_plane.copy()
+        normal_tracker.data = tracker_plane.data.copy()
+        vat_scene.collection.objects.link(normal_tracker)
+        normal_tracker.location[1] = 0
+        normal_tracker.modifiers["GeometryNodes"]["Socket_17"] = True
         
-def setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, temp_obj):
+        
+def setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, temp_obj, pack_normals):
     original_scene = bpy.context.scene
     bpy.ops.scene.new(type='NEW')
     proxy_scene = bpy.context.scene
@@ -263,35 +369,27 @@ def setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, t
     for modifier in proxy_obj.modifiers[:]:
         apply_modifier(proxy_obj, modifier)
 
+    # Refresh
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
 
     bpy.ops.object.modifier_add(type='NODES')
     proxy_obj.modifiers[-1].node_group = bpy.data.node_groups["ov_generated-pos"]
-
     create_uv_map(proxy_obj, width, height, num_frames)
-#    object_space = context.scene.vat_object_space
-    setup_vat_scene(proxy_obj, obj.name, original_scene.name, num_frames, width, height, num_wraps, object_space)
-
+    
+    setup_vat_scene(proxy_obj, obj.name, original_scene.name, num_frames, width, height, num_wraps, object_space, pack_normals)
     bpy.context.window.scene = proxy_scene
     vat_obj = proxy_obj.copy()
     vat_obj.data = proxy_obj.data.copy()
     original_scene.collection.objects.link(vat_obj)
-    
     bpy.context.window.scene = original_scene
     bpy.ops.object.select_all(action='DESELECT')
     bpy.context.view_layer.objects.active = vat_obj
     vat_obj.select_set(True)
-
     for modifier in vat_obj.modifiers[:]:
         vat_obj.modifiers.remove(modifier)
-
     bpy.ops.object.modifier_add(type='NODES')
-#    if object_space:
-#        vat_obj.modifiers[-1].node_group = bpy.data.node_groups["ov_vat-decoder-os"]
-#    else:
     vat_obj.modifiers[-1].node_group = bpy.data.node_groups["ov_vat-decoder-vs"]
-
     vat_obj.modifiers["GeometryNodes"]["Socket_2_attribute_name"] = "VAT_UV"
     vat_obj.modifiers["GeometryNodes"]["Socket_6"] = num_frames
     vat_obj.modifiers["GeometryNodes"]["Socket_7"] = height
@@ -309,16 +407,14 @@ def setup_proxy_scene(obj, num_frames, width, height, num_wraps, object_space, t
 
     export_vat_fbx()
 
-def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width, height, num_wraps, object_space):
+def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width, height, num_wraps, object_space, pack_normals):
     bpy.ops.scene.new(type='NEW')
     vat_scene = bpy.context.scene
     vat_scene.name = f"{obj_name}_vat"
     original_scene = bpy.data.scenes[original_scene_name]
     output_dir = original_scene.vat_output_directory    
-    
     vat_scene.frame_start = bpy.data.scenes[original_scene_name].frame_start
     vat_scene.frame_end = bpy.data.scenes[original_scene_name].frame_end
-    
     camera = bpy.data.cameras.new("Camera")
     camera_obj = bpy.data.objects.new("Camera", camera)
     vat_scene.collection.objects.link(camera_obj)
@@ -326,7 +422,6 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
     camera_obj.location = (0, 0, 10)
     camera_obj.data.type = 'ORTHO'
     camera_obj.data.ortho_scale = 10
-    
     vat_scene.render.resolution_x = width
     vat_scene.render.resolution_y = height
     vat_scene.display_settings.display_device = 'sRGB'
@@ -340,75 +435,64 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
     vat_scene.render.use_compositing = False
     vat_scene.render.use_sequencer = False
     vat_scene.eevee.taa_render_samples = 1
-    
     original_scene = bpy.data.scenes[original_scene_name] 
-    
     os.makedirs(output_dir, exist_ok=True)
-    render_vat_scene(vat_scene, 1, output_dir)
+    render_vat_scene(vat_scene, 0, output_dir)
     vat_scene.render.use_compositing = True
    
     # Set compositing nodes in VAT scene
     setup_compositing(vat_scene, output_dir, vat_scene.name, proxy_obj)
-    
-
     nodegroup_method = "ov_calculate-position-vs"
-    
-    setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps, proxy_obj.name, original_scene, nodegroup_method)
-    
+    setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps, proxy_obj.name, original_scene, nodegroup_method, pack_normals)
+    print ("VAT Tracker Created")
+    print ("Starting render process...")
+   
     # Render VAT   
     render_vat_scene(vat_scene, num_frames, output_dir)
-    
     if (object_space):  
-        bpy.context.object.modifiers["GeometryNodes"]["Socket_17"] = True    
+        if not pack_normals: 
+            print ("Starting normals render process...")
+            bpy.context.object.modifiers["GeometryNodes"]["Socket_17"] = True
+            rendername = vat_scene.name.replace("_vat", "_vnrm")
+            vat_scene.render.use_compositing = False
+            render_vat_nrml(vat_scene, 0, output_dir)
+            vat_scene.render.use_compositing = True
+            tree = vat_scene.node_tree
+            image_node = tree.nodes["Image"]
+            image = bpy.data.images.get(rendername + ".png")
+            image_node.image = image
+            image.colorspace_settings.name = 'Non-Color'
+            render_vat_nrml(vat_scene, num_frames, output_dir)
         
-        rendername = vat_scene.name.replace("_vat", "_vnrm")
-        vat_scene.render.use_compositing = False
-        render_vat_nrml(vat_scene, 1, output_dir)
-        vat_scene.render.use_compositing = True
-        tree = vat_scene.node_tree
-        
-        image_node = tree.nodes["Image"]
-        image = bpy.data.images.get(rendername + ".png")
-        image_node.image = image
-        image.colorspace_settings.name = 'Non-Color'
-
-        render_vat_nrml(vat_scene, num_frames, output_dir)
-        
-    
-
+# Set up compositing for the per frame capture overlay in the vat scene
 def setup_compositing(vat_scene, output_dir, scene_name, proxy_obj):
     vat_scene.use_nodes = True
     tree = vat_scene.node_tree
-    links = tree.links
-        
-        
+    links = tree.links              
     for node in tree.nodes:
         tree.nodes.remove(node)
-    
     render_layers_node = tree.nodes.new(type="CompositorNodeRLayers")
     image_node = tree.nodes.new(type="CompositorNodeImage")
     zcombine_node = tree.nodes.new(type="CompositorNodeZcombine")
     composite_node = tree.nodes.new(type="CompositorNodeComposite")
-    
     links.new(render_layers_node.outputs[0], zcombine_node.inputs[2])
     links.new(image_node.outputs[0], zcombine_node.inputs[0])
     links.new(zcombine_node.outputs[0], composite_node.inputs[0])
-    
     image = bpy.data.images.get(vat_scene.name + ".png")
     image_node.image = image
     image.colorspace_settings.name = 'Non-Color'
     zcombine_node.use_alpha = True
     zcombine_node.use_antialias_z = False
-    
+    print("VAT Compositing Nodes sucessfully set in " + str(vat_scene))
+
+# Called to render temporary frames to first prime the compositor, then through sequence for vat and optionally vnrm    
 def render_vat_scene(vat_scene, num_frames, output_dir):
     start_frame = vat_scene.frame_start
-    end_frame = vat_scene.frame_end
+    end_frame = num_frames
     output_path = os.path.join(output_dir, f"{vat_scene.name}", f"{vat_scene.name}.png")
     nrmoutput_path = os.path.join(output_dir, f"{vat_scene.name}", vat_scene.name.replace("_vat", "_vnrm") + ".png")
-
     if os.path.exists(output_path):
         bpy.data.images.remove(bpy.data.images.load(output_path))
-    
     for frame in range(start_frame -1, end_frame + 1):
         vat_scene.frame_set(frame)
         vat_scene.render.filepath = output_path
@@ -418,19 +502,17 @@ def render_vat_scene(vat_scene, num_frames, output_dir):
             img.reload()
         else:
             img = bpy.data.images.load(output_path)
-        print(f"Rendered and reloaded frame {frame}")
+            print(f"Rendered template frame for compositing {frame}")
+    print(f"VAT Encoding finished, exported to {output_dir}")
     
-
+# Similar to render_vat_scene above, but to a new texture name
 def render_vat_nrml(vat_scene, num_frames, output_dir):
     start_frame = vat_scene.frame_start
-    end_frame = vat_scene.frame_end
-    
+    end_frame = num_frames
     rendername = vat_scene.name.replace("_vat", "_vnrm")
     output_path = os.path.join(output_dir, f"{vat_scene.name}", f"{rendername}.png")
-
     if os.path.exists(output_path):
-        bpy.data.images.remove(bpy.data.images.load(output_path))
-    
+        bpy.data.images.remove(bpy.data.images.load(output_path)) 
     for frame in range(start_frame -1, end_frame + 1):
         vat_scene.frame_set(frame)
         vat_scene.render.filepath = output_path
@@ -440,15 +522,16 @@ def render_vat_nrml(vat_scene, num_frames, output_dir):
             img.reload()
         else:
             img = bpy.data.images.load(output_path)
-        print(f"Rendered and reloaded frame {frame}")
+            print(f"Rendered template frame for normals compositing {frame}")
+    print(f"VNRM Encoding finished, exported to {output_dir}")
 
+# Export the selected object with default export settings for openVAT    
 def export_vat_fbx():
     obj = bpy.context.active_object
+    
+    # Failsafe
     if obj is None:
         raise Exception("No active object selected")
-
-#    blend_filepath = bpy.data.filepath
-#    blend_directory = os.path.dirname(blend_filepath)
     export_directory = bpy.path.abspath(bpy.context.scene.vat_output_directory)
     object_directory = os.path.join(export_directory, obj.name)
     if not os.path.exists(object_directory):
@@ -477,15 +560,14 @@ def export_vat_fbx():
         bake_anim=False,
         path_mode='AUTO'
     )
+    print(f"Exported {obj.name} to {export_path} with default settings (includes additional UVmap VAT_UV)")
 
-    print(f"Exported {obj.name} to {export_path}")
-
+# Get data from dependency graph
 def get_geometry_nodes_data(obj, attribute_name):
     data = []
     depsgraph = bpy.context.evaluated_depsgraph_get()
     obj_eval = obj.evaluated_get(depsgraph)
     mesh = obj_eval.data
-
     if attribute_name in mesh.attributes:
         attr_data = mesh.attributes[attribute_name].data
         for item in attr_data:
@@ -495,6 +577,7 @@ def get_geometry_nodes_data(obj, attribute_name):
 
     return data
 
+# Write data to JSON
 def write_json(data, filepath):
     class CustomEncoder(json.JSONEncoder):
         def default(self, obj):
@@ -505,9 +588,11 @@ def write_json(data, filepath):
     with open(filepath, 'w') as f:
         json.dump(data, f, indent=4, cls=CustomEncoder)
 
+# Quick rounding function
 def round_to_nearest_ten(val, func):
     return func(val * 10) / 10
 
+# Function to find x, y, z min/max from JSON
 def find_max_min_values(all_frames_data):
     max_values = [float('-inf'), float('-inf'), float('-inf')]
     min_values = [float('inf'), float('inf'), float('inf')]
@@ -526,12 +611,7 @@ def find_max_min_values(all_frames_data):
 
     return overall_max, overall_min
 
-def remap_values(value, old_min, old_max, new_min=0, new_max=1):
-    if old_max == old_min:
-        return new_min
-    return (value - old_min) / (old_max - old_min) * (new_max - new_min) + new_min
-
-def main(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath):
+def make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath):
     obj = bpy.data.objects.get(obj_name)
     if obj is None:
         print(f"Object '{obj_name}' not found")
@@ -582,26 +662,37 @@ def apply_modifier(obj, modifier):
     obj.modifiers.remove(modifier)
     obj.data = mesh_from_eval
 
+def toggle_properties(self, context, prop):
+    if prop == "vat_object_space" and self.vat_object_space:
+        self.vat_pack_normals = False
+    elif prop == "vat_pack_normals" and self.vat_pack_normals:
+        self.vat_object_space = False
+
 def register():
     bpy.types.Scene.vat_output_directory = bpy.props.StringProperty(
         name="Output Directory",
         description="Directory to save exported content (must be an absolute path)",
         default="DEFINE_YOUR_PATH_HERE"
     )
-    bpy.types.Scene.vat_object_space = bpy.props.BoolProperty(
-        name="Object Space",
-        description="Exports an additional map containing animated vertex normal data",
-        default=False
-    )
     bpy.types.Scene.vat_custom_proxy = bpy.props.BoolProperty(
         name="Use Custom Proxy",
         description="Selected object acts as proxy to active object. If False, uses frame 1 as proxy deformation",
         default=False
     )
-    bpy.types.Scene.vat_debug_mode = bpy.props.BoolProperty(
-        name="Debug",
-        description="Keeps the resulting work used to create the VAT (Proxy Scene, VAT-Tracker Scene)",
-        default=False
+    bpy.types.Scene.vat_cleanup_enabled = bpy.props.BoolProperty(
+        name="Perform Cleanup",
+        description="Removes all generated data",
+        default=True
+    )
+    bpy.types.Scene.vat_object_space = bpy.props.BoolProperty(
+        name="Separate Map",
+        description="Use a separate map for vertex normals",
+        update=lambda self, context: toggle_properties(self, context, "vat_object_space")
+    )
+    bpy.types.Scene.vat_pack_normals = bpy.props.BoolProperty(
+        name="Packed",
+        description="Pack vertex normals",
+        update=lambda self, context: toggle_properties(self, context, "vat_pack_normals")
     )
     bpy.utils.register_class(OBJECT_PT_VAT_Calculator)
     bpy.utils.register_class(OBJECT_OT_CalculateVATResolution)
@@ -612,6 +703,9 @@ def unregister():
     del bpy.types.Scene.vat_output_directory
     del bpy.types.Scene.vat_object_space
     del bpy.types.Scene.vat_custom_proxy
+    del bpy.types.Scene.vat_cleanup_enabled
+    del bpy.types.Scene.vat_pack_normals
+
 
 if __name__ == "__main__":
     register()
