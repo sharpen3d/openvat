@@ -1,5 +1,8 @@
 # OpenVAT VAT Encoder for Blender
 
+The ZIP in this main repo openvat.zip is always the latest Blender Addon - simply download the raw file.
+Other files in this repo are associated work, templates and shaders.
+
 The OpenVAT VAT Encoder for Blender interface consists of a tool present in the 3D Viewport - Category "OpenVAT".
 
 ## Encoding
