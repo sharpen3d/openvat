@@ -1,0 +1,576 @@
+Begin Object Class=/Script/Engine.MaterialFunction Name="openvat_default_Func" ExportPath="/Script/Engine.MaterialFunction'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func'"
+   Begin Object Class=/Script/Engine.Material Name="Material_1" ExportPath="/Script/Engine.Material'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:Material_1'"
+      Begin Object Class=/Script/Engine.MaterialEditorOnlyData Name="Material_1EditorOnlyData" ExportPath="/Script/Engine.MaterialEditorOnlyData'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:Material_1.Material_1EditorOnlyData'"
+      End Object
+   End Object
+   Begin Object Class=/Script/Engine.MaterialFunctionEditorOnlyData Name="openvat_default_FuncEditorOnlyData" ExportPath="/Script/Engine.MaterialFunctionEditorOnlyData'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:openvat_default_FuncEditorOnlyData'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_0" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureCoordinate Name="MaterialExpressionTextureCoordinate_0" ExportPath="/Script/Engine.MaterialExpressionTextureCoordinate'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTextureCoordinate_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionDivide Name="MaterialExpressionDivide_0" ExportPath="/Script/Engine.MaterialExpressionDivide'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionDivide_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTime Name="MaterialExpressionTime_0" ExportPath="/Script/Engine.MaterialExpressionTime'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTime_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionDivide Name="MaterialExpressionDivide_1" ExportPath="/Script/Engine.MaterialExpressionDivide'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionDivide_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_3" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_3'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_4" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_4'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_5" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_5'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_4" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_4'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_5" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_5'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_6" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_6'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_8" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_8'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_9" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_9'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_14" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_14'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_15" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_15'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTransform Name="MaterialExpressionTransform_0" ExportPath="/Script/Engine.MaterialExpressionTransform'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTransform_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_2" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_2'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_3" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_3'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_1" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFrac Name="MaterialExpressionFrac_0" ExportPath="/Script/Engine.MaterialExpressionFrac'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFrac_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_4" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_4'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMultiply Name="MaterialExpressionMultiply_5" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_5'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_2" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_2'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionReroute Name="MaterialExpressionReroute_0" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionReroute_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureObjectParameter Name="MaterialExpressionTextureObjectParameter_0" ExportPath="/Script/Engine.MaterialExpressionTextureObjectParameter'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTextureObjectParameter_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_2" ExportPath="/Script/Engine.MaterialExpressionTextureSample'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTextureSample_2'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_4" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_4'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_5" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_5'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionReroute Name="MaterialExpressionReroute_1" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionReroute_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionSubtract Name="MaterialExpressionSubtract_6" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_6'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_21" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_21'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_22" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_22'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionTextureSample Name="MaterialExpressionTextureSample_3" ExportPath="/Script/Engine.MaterialExpressionTextureSample'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTextureSample_3'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_23" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_23'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_25" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_25'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_8" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_8'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_9" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_9'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionConstant Name="MaterialExpressionConstant_10" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_10'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionMaterialFunctionCall Name="MaterialExpressionMaterialFunctionCall_26" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_26'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_0" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_0'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_1" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_1'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_2" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_2'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_3" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_3'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_4" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_4'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionInput Name="MaterialExpressionFunctionInput_5" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_5'"
+   End Object
+   Begin Object Class=/Script/Engine.MaterialExpressionFunctionOutput Name="MaterialExpressionFunctionOutput_1" ExportPath="/Script/Engine.MaterialExpressionFunctionOutput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionOutput_1'"
+   End Object
+   Begin Object Name="Material_1" ExportPath="/Script/Engine.Material'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:Material_1'"
+      Begin Object Name="Material_1EditorOnlyData" ExportPath="/Script/Engine.MaterialEditorOnlyData'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:Material_1.Material_1EditorOnlyData'"
+         EmissiveColor=(Expression="/Script/Engine.MaterialExpressionFunctionOutput'openvat_default_Func:MaterialExpressionFunctionOutput_1'")
+         ExpressionCollection=(Expressions=("/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_0'","/Script/Engine.MaterialExpressionTextureCoordinate'openvat_default_Func:MaterialExpressionTextureCoordinate_0'","/Script/Engine.MaterialExpressionDivide'openvat_default_Func:MaterialExpressionDivide_0'","/Script/Engine.MaterialExpressionTime'openvat_default_Func:MaterialExpressionTime_0'","/Script/Engine.MaterialExpressionDivide'openvat_default_Func:MaterialExpressionDivide_1'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_3'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_4'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_5'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_4'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_5'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_6'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_8'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_9'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_14'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_15'","/Script/Engine.MaterialExpressionTransform'openvat_default_Func:MaterialExpressionTransform_0'","/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_2'","/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_3'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_1'","/Script/Engine.MaterialExpressionFrac'openvat_default_Func:MaterialExpressionFrac_0'","/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_4'","/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_5'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_2'","/Script/Engine.MaterialExpressionReroute'openvat_default_Func:MaterialExpressionReroute_0'","/Script/Engine.MaterialExpressionTextureObjectParameter'openvat_default_Func:MaterialExpressionTextureObjectParameter_0'","/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_2'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_4'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_5'","/Script/Engine.MaterialExpressionReroute'openvat_default_Func:MaterialExpressionReroute_1'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_6'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_21'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_22'","/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_3'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_23'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_25'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_8'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_9'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_10'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_26'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_0'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_1'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_2'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_3'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_4'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_5'","/Script/Engine.MaterialExpressionFunctionOutput'openvat_default_Func:MaterialExpressionFunctionOutput_1'"))
+      End Object
+      ShadingModel=MSM_Unlit
+      ShadingModels=(ShadingModelField=1)
+      bCanMaskedBeAssumedOpaque=True
+      StateId=418F0BE14A6AE320509E64879B1966C3
+      ReferencedTextureGuids(0)=3D6ACB2947B96DC4762ED2BCC8239BFB
+      EditorOnlyData="/Script/Engine.MaterialEditorOnlyData'Material_1EditorOnlyData'"
+      LightingGuid=D65F567042DCDEE699EF02B2E3586162
+   End Object
+   Begin Object Name="openvat_default_FuncEditorOnlyData" ExportPath="/Script/Engine.MaterialFunctionEditorOnlyData'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:openvat_default_FuncEditorOnlyData'"
+      ExpressionCollection=(Expressions=("/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_0'","/Script/Engine.MaterialExpressionTextureCoordinate'openvat_default_Func:MaterialExpressionTextureCoordinate_0'","/Script/Engine.MaterialExpressionDivide'openvat_default_Func:MaterialExpressionDivide_0'","/Script/Engine.MaterialExpressionTime'openvat_default_Func:MaterialExpressionTime_0'","/Script/Engine.MaterialExpressionDivide'openvat_default_Func:MaterialExpressionDivide_1'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_3'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_4'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_5'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_4'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_5'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_6'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_8'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_9'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_14'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_15'","/Script/Engine.MaterialExpressionTransform'openvat_default_Func:MaterialExpressionTransform_0'","/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_2'","/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_3'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_1'","/Script/Engine.MaterialExpressionFrac'openvat_default_Func:MaterialExpressionFrac_0'","/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_4'","/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_5'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_2'","/Script/Engine.MaterialExpressionReroute'openvat_default_Func:MaterialExpressionReroute_0'","/Script/Engine.MaterialExpressionTextureObjectParameter'openvat_default_Func:MaterialExpressionTextureObjectParameter_0'","/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_2'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_4'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_5'","/Script/Engine.MaterialExpressionReroute'openvat_default_Func:MaterialExpressionReroute_1'","/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_6'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_21'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_22'","/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_3'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_23'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_25'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_8'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_9'","/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_10'","/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_26'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_0'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_1'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_2'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_3'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_4'","/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_5'","/Script/Engine.MaterialExpressionFunctionOutput'openvat_default_Func:MaterialExpressionFunctionOutput_1'"))
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_0" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_0'"
+      A=(Expression="/Script/Engine.MaterialExpressionTransform'openvat_default_Func:MaterialExpressionTransform_0'")
+      ConstB=100.000000
+      MaterialExpressionEditorX=1696
+      MaterialExpressionEditorY=352
+      MaterialExpressionGuid=E81AE45648FA5908CB4B45945FB8343E
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionTextureCoordinate_0" ExportPath="/Script/Engine.MaterialExpressionTextureCoordinate'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTextureCoordinate_0'"
+      CoordinateIndex=1
+      MaterialExpressionEditorX=-1504
+      MaterialExpressionEditorY=-96
+      MaterialExpressionGuid=CB42BC9F45BC5ADF33C5A4B7A57BF76B
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionDivide_0" ExportPath="/Script/Engine.MaterialExpressionDivide'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionDivide_0'"
+      A=(OutputIndex=1)
+      B=(Expression="/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_0'")
+      MaterialExpressionEditorX=-1088
+      MaterialExpressionEditorY=80
+      MaterialExpressionGuid=C9D7557F408687A1E02499B167703590
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionTime_0" ExportPath="/Script/Engine.MaterialExpressionTime'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTime_0'"
+      Period=30.000000
+      MaterialExpressionEditorX=-1744
+      MaterialExpressionEditorY=208
+      MaterialExpressionGuid=13DACEE042846BBD545C85A2D6CF7C10
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionDivide_1" ExportPath="/Script/Engine.MaterialExpressionDivide'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionDivide_1'"
+      A=(Expression="/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_3'")
+      B=(Expression="/Script/Engine.MaterialExpressionReroute'openvat_default_Func:MaterialExpressionReroute_1'")
+      ConstB=1.000000
+      MaterialExpressionEditorX=-1280
+      MaterialExpressionEditorY=432
+      MaterialExpressionGuid=9F363CC3451E14E989C20CBD31C49A73
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_3" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_3'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions03/Math/RemapValueRange.RemapValueRange'"
+      FunctionInputs(0)=(ExpressionInputId=7815F22649EAE745F122D186BF2036B1,Input=(Expression="/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_2'",OutputIndex=2,InputName="Input",Mask=1,MaskG=1))
+      FunctionInputs(1)=(ExpressionInputId=4FB7C1914447359787B142A38BD2115C,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_4'",InputName="Input Low"))
+      FunctionInputs(2)=(ExpressionInputId=BDC9833D47571DD88AE3B892BA913AC2,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_5'",InputName="Input High"))
+      FunctionInputs(3)=(ExpressionInputId=E518DF3C4CEA08859BCB74A0D4227458,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_6'",OutputIndex=1,InputName="Target Low"))
+      FunctionInputs(4)=(ExpressionInputId=997106CD4B88D3FF91277EAF5ECF8884,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_8'",OutputIndex=1,InputName="Target High"))
+      FunctionOutputs(0)=(ExpressionOutputId=6ACB0DF34E8DA8673A435BA9BC99AB24,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=880
+      MaterialExpressionEditorY=384
+      MaterialExpressionGuid=A68FB33D4178AAB0F5B389BEA4B9AFAB
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_4" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_4'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions03/Math/RemapValueRange.RemapValueRange'"
+      FunctionInputs(0)=(ExpressionInputId=7815F22649EAE745F122D186BF2036B1,Input=(Expression="/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_2'",OutputIndex=3,InputName="Input",Mask=1,MaskB=1))
+      FunctionInputs(1)=(ExpressionInputId=4FB7C1914447359787B142A38BD2115C,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_4'",InputName="Input Low"))
+      FunctionInputs(2)=(ExpressionInputId=BDC9833D47571DD88AE3B892BA913AC2,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_5'",InputName="Input High"))
+      FunctionInputs(3)=(ExpressionInputId=E518DF3C4CEA08859BCB74A0D4227458,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_6'",OutputIndex=2,InputName="Target Low"))
+      FunctionInputs(4)=(ExpressionInputId=997106CD4B88D3FF91277EAF5ECF8884,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_8'",OutputIndex=2,InputName="Target High"))
+      FunctionOutputs(0)=(ExpressionOutputId=6ACB0DF34E8DA8673A435BA9BC99AB24,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=880
+      MaterialExpressionEditorY=576
+      MaterialExpressionGuid=1FB96B5949A24DF73F42D6B593830E72
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_5" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_5'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions03/Math/RemapValueRange.RemapValueRange'"
+      FunctionInputs(0)=(ExpressionInputId=7815F22649EAE745F122D186BF2036B1,Input=(Expression="/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_2'",OutputIndex=1,InputName="Input",Mask=1,MaskR=1))
+      FunctionInputs(1)=(ExpressionInputId=4FB7C1914447359787B142A38BD2115C,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_4'",InputName="Input Low"))
+      FunctionInputs(2)=(ExpressionInputId=BDC9833D47571DD88AE3B892BA913AC2,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_5'",InputName="Input High"))
+      FunctionInputs(3)=(ExpressionInputId=E518DF3C4CEA08859BCB74A0D4227458,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_6'",InputName="Target Low"))
+      FunctionInputs(4)=(ExpressionInputId=997106CD4B88D3FF91277EAF5ECF8884,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_8'",InputName="Target High"))
+      FunctionOutputs(0)=(ExpressionOutputId=6ACB0DF34E8DA8673A435BA9BC99AB24,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=880
+      MaterialExpressionEditorY=192
+      MaterialExpressionGuid=5DFFBA0443000257974FE9881EBB546E
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionConstant_4" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_4'"
+      MaterialExpressionEditorX=496
+      MaterialExpressionEditorY=256
+      MaterialExpressionGuid=E4B2BC7542C6AA97C1A3C9ACDB630F2D
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionConstant_5" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_5'"
+      R=1.000000
+      MaterialExpressionEditorX=496
+      MaterialExpressionEditorY=336
+      MaterialExpressionGuid=172C9619433F82B3B1C6A6BC4CCAEA86
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_6" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_6'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components.BreakOutFloat3Components'"
+      FunctionInputs(0)=(ExpressionInputId=0FC5C56B4335798F20CB928CF1C87421,Input=(Expression="/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_4'",InputName="Float3"))
+      FunctionOutputs(0)=(ExpressionOutputId=6BC893C247FCFC567178CE944E213385,Output=(OutputName="R"))
+      FunctionOutputs(1)=(ExpressionOutputId=9720C81E449DF8E5514FCB8A80FD5FA3,Output=(OutputName="G"))
+      FunctionOutputs(2)=(ExpressionOutputId=17CE6E2C4E70841B48F3D1B73828AA03,Output=(OutputName="B"))
+      MaterialExpressionEditorX=480
+      MaterialExpressionEditorY=608
+      MaterialExpressionGuid=A9C821514F32A93EC6C041A7B95E0F66
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="R")
+      Outputs(1)=(OutputName="G")
+      Outputs(2)=(OutputName="B")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_8" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_8'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components.BreakOutFloat3Components'"
+      FunctionInputs(0)=(ExpressionInputId=0FC5C56B4335798F20CB928CF1C87421,Input=(Expression="/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_5'",InputName="Float3"))
+      FunctionOutputs(0)=(ExpressionOutputId=6BC893C247FCFC567178CE944E213385,Output=(OutputName="R"))
+      FunctionOutputs(1)=(ExpressionOutputId=9720C81E449DF8E5514FCB8A80FD5FA3,Output=(OutputName="G"))
+      FunctionOutputs(2)=(ExpressionOutputId=17CE6E2C4E70841B48F3D1B73828AA03,Output=(OutputName="B"))
+      MaterialExpressionEditorX=448
+      MaterialExpressionEditorY=832
+      MaterialExpressionGuid=93F929AF47EC9BF340AB369C7682B0EA
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="R")
+      Outputs(1)=(OutputName="G")
+      Outputs(2)=(OutputName="B")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_9" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_9'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3.MakeFloat3'"
+      FunctionInputs(0)=(ExpressionInputId=529C1D96441E07EB03A9E59B8A7F67B6,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_5'",InputName="X"))
+      FunctionInputs(1)=(ExpressionInputId=B5BD7D1B494F6928732CCDA1C63D8E15,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_4'",InputName="Y"))
+      FunctionInputs(2)=(ExpressionInputId=050F17B8471570B47A802CB7CAA5A201,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_3'",InputName="Z"))
+      FunctionOutputs(0)=(ExpressionOutputId=0DD6F9954C067C3E5DDBBBA0D6910DD2,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=1296
+      MaterialExpressionEditorY=352
+      MaterialExpressionGuid=2E03E79042030959E29DED829BD3AD63
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_14" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_14'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat2Components.BreakOutFloat2Components'"
+      FunctionInputs(0)=(ExpressionInputId=0FC5C56B4335798F20CB928CF1C87421,Input=(Expression="/Script/Engine.MaterialExpressionTextureCoordinate'openvat_default_Func:MaterialExpressionTextureCoordinate_0'",InputName="Float2"))
+      FunctionOutputs(0)=(ExpressionOutputId=6BC893C247FCFC567178CE944E213385,Output=(OutputName="R"))
+      FunctionOutputs(1)=(ExpressionOutputId=9720C81E449DF8E5514FCB8A80FD5FA3,Output=(OutputName="G"))
+      MaterialExpressionEditorX=-1280
+      MaterialExpressionEditorY=-96
+      MaterialExpressionGuid=5809BC0C423E7640ED7B76BE76391728
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="R")
+      Outputs(1)=(OutputName="G")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_15" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_15'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions02/Utility/MakeFloat2.MakeFloat2'"
+      FunctionInputs(0)=(ExpressionInputId=529C1D96441E07EB03A9E59B8A7F67B6,Input=(Expression="/Script/Engine.MaterialExpressionReroute'openvat_default_Func:MaterialExpressionReroute_0'",InputName="X"))
+      FunctionInputs(1)=(ExpressionInputId=B5BD7D1B494F6928732CCDA1C63D8E15,Input=(Expression="/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_5'",InputName="Y"))
+      FunctionOutputs(0)=(ExpressionOutputId=0DD6F9954C067C3E5DDBBBA0D6910DD2,Output=(OutputName="Result"))
+      MaterialExpressionEditorY=-64
+      MaterialExpressionGuid=7F871A4046D9AAC8237BFAA4AFE9C7CF
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionTransform_0" ExportPath="/Script/Engine.MaterialExpressionTransform'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTransform_0'"
+      Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_9'")
+      TransformSourceType=TRANSFORMSOURCE_Local
+      MaterialExpressionEditorX=1472
+      MaterialExpressionEditorY=336
+      MaterialExpressionGuid=797DFD3C4F691C8C288DB0A6DB1B64FF
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_2" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_2'"
+      A=(Expression="/Script/Engine.MaterialExpressionTime'openvat_default_Func:MaterialExpressionTime_0'")
+      B=(Expression="/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_1'")
+      MaterialExpressionEditorX=-1568
+      MaterialExpressionEditorY=224
+      MaterialExpressionGuid=1552592E4C8AE3A2AD34A999C666EF80
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_3" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_3'"
+      A=(Expression="/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_2'")
+      B=(Expression="/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_2'")
+      MaterialExpressionEditorX=-1424
+      MaterialExpressionEditorY=320
+      MaterialExpressionGuid=1CF866ED4D701B59394F65BCC83CC19C
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_1" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_1'"
+      A=(Expression="/Script/Engine.MaterialExpressionReroute'openvat_default_Func:MaterialExpressionReroute_1'")
+      MaterialExpressionEditorX=-1296
+      MaterialExpressionEditorY=560
+      MaterialExpressionGuid=4202A6584310B840353D649E7EAEF24A
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionFrac_0" ExportPath="/Script/Engine.MaterialExpressionFrac'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFrac_0'"
+      Input=(Expression="/Script/Engine.MaterialExpressionDivide'openvat_default_Func:MaterialExpressionDivide_1'")
+      MaterialExpressionEditorX=-1136
+      MaterialExpressionEditorY=432
+      MaterialExpressionGuid=947FE7884D5DEC8290A8DDA5662B1588
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_4" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_4'"
+      A=(Expression="/Script/Engine.MaterialExpressionFrac'openvat_default_Func:MaterialExpressionFrac_0'")
+      B=(Expression="/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_1'")
+      MaterialExpressionEditorX=-992
+      MaterialExpressionEditorY=432
+      MaterialExpressionGuid=7858E5854DAB909B170D728DB127350A
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMultiply_5" ExportPath="/Script/Engine.MaterialExpressionMultiply'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMultiply_5'"
+      A=(Expression="/Script/Engine.MaterialExpressionDivide'openvat_default_Func:MaterialExpressionDivide_0'")
+      B=(Expression="/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_4'")
+      MaterialExpressionEditorX=-784
+      MaterialExpressionEditorY=176
+      MaterialExpressionGuid=D911FE6245A68C293BD438AEF1DE2520
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_2" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_2'"
+      A=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_14'",OutputIndex=1)
+      B=(Expression="/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_5'")
+      MaterialExpressionEditorX=-576
+      MaterialExpressionEditorY=16
+      MaterialExpressionGuid=70BC331F456479C6680A35A3A09A48E2
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionReroute_0" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionReroute_0'"
+      Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_14'")
+      MaterialExpressionEditorX=-144
+      MaterialExpressionEditorY=-64
+      MaterialExpressionGuid=922A4E1A47558983A384A78D03EE7F03
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionTextureObjectParameter_0" ExportPath="/Script/Engine.MaterialExpressionTextureObjectParameter'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTextureObjectParameter_0'"
+      ParameterName="VAT_main"
+      ExpressionGUID=2861AE8B4734C49E0031179DAD0C980C
+      ConstCoordinate=1
+      Texture="/Script/Engine.Texture2D'/Game/OpenVAT/Demo/TubeMan/Textures/tubeMan_vat_main.tubeMan_vat_main'"
+      SamplerType=SAMPLERTYPE_LinearColor
+      MaterialExpressionEditorX=-272
+      MaterialExpressionEditorY=-880
+      MaterialExpressionGuid=E0F1165F49BE20159026C5AE11709148
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_2" ExportPath="/Script/Engine.MaterialExpressionTextureSample'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTextureSample_2'"
+      Coordinates=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_15'")
+      TextureObject=(Expression="/Script/Engine.MaterialExpressionTextureObjectParameter'openvat_default_Func:MaterialExpressionTextureObjectParameter_0'")
+      SamplerType=SAMPLERTYPE_LinearColor
+      MaterialExpressionEditorX=304
+      MaterialExpressionEditorY=-32
+      MaterialExpressionGuid=77DA5CCC4580C4973B7A7780E08FCDF9
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_4" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_4'"
+      A=(Expression="/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_2'")
+      ConstB=0.500000
+      MaterialExpressionEditorX=-368
+      MaterialExpressionEditorY=16
+      MaterialExpressionGuid=132554EB46577407C5C5F0A46AC858B1
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_5" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_5'"
+      A=(Expression="/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_4'")
+      B=(Expression="/Script/Engine.MaterialExpressionDivide'openvat_default_Func:MaterialExpressionDivide_0'")
+      ConstB=0.500000
+      MaterialExpressionEditorX=-128
+      MaterialExpressionEditorY=64
+      MaterialExpressionGuid=DB906A9E4151754923B2859E426FDB3F
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionReroute_1" ExportPath="/Script/Engine.MaterialExpressionReroute'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionReroute_1'"
+      Input=(Expression="/Script/Engine.MaterialExpressionFunctionInput'openvat_default_Func:MaterialExpressionFunctionInput_3'")
+      MaterialExpressionEditorX=-1760
+      MaterialExpressionEditorY=592
+      MaterialExpressionGuid=BF098E694286A309E8864492CE797DBB
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionSubtract_6" ExportPath="/Script/Engine.MaterialExpressionSubtract'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionSubtract_6'"
+      A=(Expression="/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_5'")
+      ConstB=0.500000
+      MaterialExpressionEditorX=144
+      MaterialExpressionEditorY=-720
+      MaterialExpressionGuid=F3F7CD43487932DE24C1759F54F68416
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_21" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_21'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions02/Utility/MakeFloat2.MakeFloat2'"
+      FunctionInputs(0)=(ExpressionInputId=529C1D96441E07EB03A9E59B8A7F67B6,Input=(Expression="/Script/Engine.MaterialExpressionReroute'openvat_default_Func:MaterialExpressionReroute_0'",InputName="X"))
+      FunctionInputs(1)=(ExpressionInputId=B5BD7D1B494F6928732CCDA1C63D8E15,Input=(Expression="/Script/Engine.MaterialExpressionSubtract'openvat_default_Func:MaterialExpressionSubtract_6'",InputName="Y"))
+      FunctionOutputs(0)=(ExpressionOutputId=0DD6F9954C067C3E5DDBBBA0D6910DD2,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=320
+      MaterialExpressionEditorY=-784
+      MaterialExpressionGuid=28A8CF884ED0F42EA180F1A5C5524AFE
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_22" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_22'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions03/Math/RemapValueRange.RemapValueRange'"
+      FunctionInputs(0)=(ExpressionInputId=7815F22649EAE745F122D186BF2036B1,Input=(Expression="/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_3'",OutputIndex=1,InputName="Input",Mask=1,MaskR=1))
+      FunctionInputs(1)=(ExpressionInputId=4FB7C1914447359787B142A38BD2115C,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_8'",InputName="Input Low"))
+      FunctionInputs(2)=(ExpressionInputId=BDC9833D47571DD88AE3B892BA913AC2,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_9'",InputName="Input High"))
+      FunctionInputs(3)=(ExpressionInputId=E518DF3C4CEA08859BCB74A0D4227458,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_10'",InputName="Target Low"))
+      FunctionInputs(4)=(ExpressionInputId=997106CD4B88D3FF91277EAF5ECF8884,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_9'",InputName="Target High"))
+      FunctionOutputs(0)=(ExpressionOutputId=6ACB0DF34E8DA8673A435BA9BC99AB24,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=1040
+      MaterialExpressionEditorY=-848
+      MaterialExpressionGuid=56226D9F4798DDF43F6ADAA8EB8DB7C8
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionTextureSample_3" ExportPath="/Script/Engine.MaterialExpressionTextureSample'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionTextureSample_3'"
+      Coordinates=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_21'")
+      TextureObject=(Expression="/Script/Engine.MaterialExpressionTextureObjectParameter'openvat_default_Func:MaterialExpressionTextureObjectParameter_0'")
+      SamplerType=SAMPLERTYPE_LinearColor
+      MaterialExpressionEditorX=464
+      MaterialExpressionEditorY=-704
+      MaterialExpressionGuid=2E8BC3CC4C52EB268B96368E10DCF245
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_23" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_23'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions03/Math/RemapValueRange.RemapValueRange'"
+      FunctionInputs(0)=(ExpressionInputId=7815F22649EAE745F122D186BF2036B1,Input=(Expression="/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_3'",OutputIndex=2,InputName="Input",Mask=1,MaskG=1))
+      FunctionInputs(1)=(ExpressionInputId=4FB7C1914447359787B142A38BD2115C,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_8'",InputName="Input Low"))
+      FunctionInputs(2)=(ExpressionInputId=BDC9833D47571DD88AE3B892BA913AC2,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_9'",InputName="Input High"))
+      FunctionInputs(3)=(ExpressionInputId=E518DF3C4CEA08859BCB74A0D4227458,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_10'",InputName="Target Low"))
+      FunctionInputs(4)=(ExpressionInputId=997106CD4B88D3FF91277EAF5ECF8884,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_9'",InputName="Target High"))
+      FunctionOutputs(0)=(ExpressionOutputId=6ACB0DF34E8DA8673A435BA9BC99AB24,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=1040
+      MaterialExpressionEditorY=-656
+      MaterialExpressionGuid=FD84CA464334E27EF5BF54B7884B0E81
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_25" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_25'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions03/Math/RemapValueRange.RemapValueRange'"
+      FunctionInputs(0)=(ExpressionInputId=7815F22649EAE745F122D186BF2036B1,Input=(Expression="/Script/Engine.MaterialExpressionTextureSample'openvat_default_Func:MaterialExpressionTextureSample_3'",OutputIndex=3,InputName="Input",Mask=1,MaskB=1))
+      FunctionInputs(1)=(ExpressionInputId=4FB7C1914447359787B142A38BD2115C,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_8'",InputName="Input Low"))
+      FunctionInputs(2)=(ExpressionInputId=BDC9833D47571DD88AE3B892BA913AC2,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_9'",InputName="Input High"))
+      FunctionInputs(3)=(ExpressionInputId=E518DF3C4CEA08859BCB74A0D4227458,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_10'",InputName="Target Low"))
+      FunctionInputs(4)=(ExpressionInputId=997106CD4B88D3FF91277EAF5ECF8884,Input=(Expression="/Script/Engine.MaterialExpressionConstant'openvat_default_Func:MaterialExpressionConstant_9'",InputName="Target High"))
+      FunctionOutputs(0)=(ExpressionOutputId=6ACB0DF34E8DA8673A435BA9BC99AB24,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=1040
+      MaterialExpressionEditorY=-464
+      MaterialExpressionGuid=DF34404B42C2DAFF3B65A9971E99512D
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionConstant_8" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_8'"
+      MaterialExpressionEditorX=736
+      MaterialExpressionEditorY=-624
+      MaterialExpressionGuid=1B4EC3AB40F39EA9AC8F8BB2188640F9
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionConstant_9" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_9'"
+      R=1.000000
+      MaterialExpressionEditorX=736
+      MaterialExpressionEditorY=-704
+      MaterialExpressionGuid=70D4AF4244688D33FED6B6868E06707D
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionConstant_10" ExportPath="/Script/Engine.MaterialExpressionConstant'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionConstant_10'"
+      R=-1.000000
+      MaterialExpressionEditorX=736
+      MaterialExpressionEditorY=-544
+      MaterialExpressionGuid=583CF8EE46A9BDC01FE7818719AE57C2
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+   End Object
+   Begin Object Name="MaterialExpressionMaterialFunctionCall_26" ExportPath="/Script/Engine.MaterialExpressionMaterialFunctionCall'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionMaterialFunctionCall_26'"
+      MaterialFunction="/Script/Engine.MaterialFunction'/Engine/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3.MakeFloat3'"
+      FunctionInputs(0)=(ExpressionInputId=529C1D96441E07EB03A9E59B8A7F67B6,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_22'",InputName="X"))
+      FunctionInputs(1)=(ExpressionInputId=B5BD7D1B494F6928732CCDA1C63D8E15,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_25'",InputName="Y"))
+      FunctionInputs(2)=(ExpressionInputId=050F17B8471570B47A802CB7CAA5A201,Input=(Expression="/Script/Engine.MaterialExpressionMaterialFunctionCall'openvat_default_Func:MaterialExpressionMaterialFunctionCall_23'",InputName="Z"))
+      FunctionOutputs(0)=(ExpressionOutputId=0DD6F9954C067C3E5DDBBBA0D6910DD2,Output=(OutputName="Result"))
+      MaterialExpressionEditorX=1360
+      MaterialExpressionEditorY=-640
+      MaterialExpressionGuid=63EC8E35468398B17FF1639DC647A7E2
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      Outputs(0)=(OutputName="Result")
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_0" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_0'"
+      InputName="Y Resolution"
+      Id=9A0010E349A886B76DE568889DEAD1AE
+      InputType=FunctionInput_Scalar
+      MaterialExpressionEditorX=-2101
+      MaterialExpressionEditorY=-300
+      MaterialExpressionGuid=493DF7164CC08B2F06B75EB9032DD97C
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_1" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_1'"
+      InputName="FrameRate"
+      Id=573414B34AAB856C640ECEBE128A7579
+      InputType=FunctionInput_Scalar
+      SortPriority=10
+      MaterialExpressionEditorX=-2101
+      MaterialExpressionEditorY=-200
+      MaterialExpressionGuid=936B79FF4551CF36DB0EFF9558C2B49D
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_2" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_2'"
+      InputName="Speed"
+      Id=FB25DB6C47AC5346E50F9F84F1B74408
+      InputType=FunctionInput_Scalar
+      SortPriority=20
+      MaterialExpressionEditorX=-2101
+      MaterialExpressionEditorY=-100
+      MaterialExpressionGuid=BFD7D3E747FFF5DAF23F7F9E90BE95A8
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_3" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_3'"
+      InputName="FrameCount"
+      Id=A428BBDE4B14BA549790759F5E027841
+      InputType=FunctionInput_Scalar
+      SortPriority=30
+      MaterialExpressionEditorX=-2101
+      MaterialExpressionGuid=7303743E448B70FEEE16B6A5DA10489A
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_4" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_4'"
+      InputName="MinValues"
+      Id=57ADF6EF47CBB2E71413E9899F6C826E
+      SortPriority=40
+      MaterialExpressionEditorX=-2101
+      MaterialExpressionEditorY=100
+      MaterialExpressionGuid=C9C26E5D406B4608CE2855B9F49FFC56
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionInput_5" ExportPath="/Script/Engine.MaterialExpressionFunctionInput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionInput_5'"
+      InputName="MaxValues"
+      Id=D8E190A1458EAC6707EC49B2CC2F6B73
+      SortPriority=50
+      MaterialExpressionEditorX=-2101
+      MaterialExpressionEditorY=200
+      MaterialExpressionGuid=0BC0CDE840CE293CB63A9FBFBD912E30
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      bCollapsed=True
+   End Object
+   Begin Object Name="MaterialExpressionFunctionOutput_1" ExportPath="/Script/Engine.MaterialExpressionFunctionOutput'/Game/OpenVAT/Functions/openvat_default_Func.openvat_default_Func:MaterialExpressionFunctionOutput_1'"
+      OutputName="World Position Offset"
+      A=(Expression="/Script/Engine.MaterialExpressionMultiply'openvat_default_Func:MaterialExpressionMultiply_0'")
+      bLastPreviewed=True
+      Id=0EC0F74C455802C1B696E388D5B7ADCD
+      MaterialExpressionEditorX=2101
+      MaterialExpressionGuid=3E57E7F742064B9DB586579969277040
+      Function="/Script/Engine.MaterialFunction'openvat_default_Func'"
+      bCollapsed=True
+   End Object
+   DependentFunctionExpressionCandidates(0)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_3'"
+   DependentFunctionExpressionCandidates(1)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_4'"
+   DependentFunctionExpressionCandidates(2)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_5'"
+   DependentFunctionExpressionCandidates(3)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_6'"
+   DependentFunctionExpressionCandidates(4)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_8'"
+   DependentFunctionExpressionCandidates(5)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_9'"
+   DependentFunctionExpressionCandidates(6)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_14'"
+   DependentFunctionExpressionCandidates(7)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_15'"
+   DependentFunctionExpressionCandidates(8)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_21'"
+   DependentFunctionExpressionCandidates(9)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_22'"
+   DependentFunctionExpressionCandidates(10)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_23'"
+   DependentFunctionExpressionCandidates(11)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_25'"
+   DependentFunctionExpressionCandidates(12)="/Script/Engine.MaterialExpressionMaterialFunctionCall'MaterialExpressionMaterialFunctionCall_26'"
+   EditorOnlyData="/Script/Engine.MaterialFunctionEditorOnlyData'openvat_default_FuncEditorOnlyData'"
+   StateId=5999D74649253C799C0E59B21E7E1E34
+   CombinedInputTypes=15
+   CombinedOutputTypes=15
+End Object
