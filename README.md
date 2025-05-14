@@ -1,17 +1,8 @@
-# OpenVAT VAT Encoder for Blender
-
-The ZIP in this main repo openvat.zip is always the latest Blender Addon - simply download the raw file.
-Other files in this repo are associated work, templates and shaders.
-
-The OpenVAT VAT Encoder for Blender interface consists of a tool present in the 3D Viewport - Category "OpenVAT".
-
 # OpenVAT – Vertex Animation Toolkit for Blender
 
 **Author:** Luke Stilson  
 **Version:** 1.0.3a  
-**License:** GPL-2.0-or-later  
 **Blender Compatibility:** 4.2.0+  
-**Website:** [https://github.com/sharpen3d/openvat](https://github.com/sharpen3d/openvat)
 
 ## Overview
 
