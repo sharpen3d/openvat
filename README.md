@@ -5,51 +5,105 @@ Other files in this repo are associated work, templates and shaders.
 
 The OpenVAT VAT Encoder for Blender interface consists of a tool present in the 3D Viewport - Category "OpenVAT".
 
-## Encoding
+# OpenVAT – Vertex Animation Toolkit for Blender
 
-The tool presents a "VAT Calculator" panel in the OpenVAT category in the 3D Viewport, featuring information, options, and an operator to run the tool.
+**Author:** Luke Stilson  
+**Version:** 1.0.3a  
+**License:** GPL-2.0-or-later  
+**Blender Compatibility:** 4.2.0+  
+**Website:** [https://github.com/sharpen3d/openvat](https://github.com/sharpen3d/openvat)
 
-### Panel Labels
+## Overview
 
-Labels in the panel preemptively define to the user information which will result in VAT creation.
+**OpenVAT** is a Blender add-on that encodes Vertex Animation Textures (VATs) directly from animated geometry. Designed for real-time engine export (Unity, Unreal, Godot), it supports:
+- Frame-based geometry capture via Geometry Nodes.
+- Packed or separate normal texture output.
+- Arbitrary attribute encoding (RGB vector + optional scalar).
+- High-quality PNG or EXR export.
+- Auto-setup preview scene and cleanup.
+- Verified extension on the Blender Extensions platform.
 
-- **Active Object:** 
-  - Shows the name of the current active object, whose deformation will be recorded to VAT information.
-- **Vertex Count, Frame Range:**
-  - Vertex count of the Active Object, frame range (as defined in your scene's Output Properties).
-- **Output Resolution:**
-  - The calculated resolution of the resulting VAT, determined by the smallest ^2 that can account for frame range * number of vertices. It is recommended not to exceed an output resolution above 4096x4096.
+OpenVAT targets technical artists, shader developers, and studios aiming to bridge Blender simulations, procedural animation, or geometry nodes with performant in-engine playback.
 
-### Panel Options
+## Key Concepts
 
-User-defined properties that affect the output or output process.
+- **VAT (Vertex Animation Texture):** A texture where pixel data stores vertex positions (and optionally normals) per frame.
+- **Proxy Object:** The "bind pose" reference used as a base for calculating deltas.
+- **Remap Info:** JSON metadata storing min/max per channel for accurate reconstruction.
+- **Packed Normals:** Normals encoded into the same texture as position (saves memory but limits angular precision).
 
-- **Output Directory:**
-  - The absolute path on disk where resulting content will be exported.
-- **Vertex Normals:**
-  - Export the resulting vertex normal VAT information (currently as a separate PNG export). This can be helpful in the engine to correct reflection and rendering on manipulated/deforming animated objects, but is not always necessary.
-- **Debug Mode:**
-  - When creating the VAT with Debug Mode enabled, the script 'shows its work' by keeping all temporary scene, object, and compositing construction (which is hidden and removed by default). Debug mode will keep 2 Scenes (active-object-name_vat - referred to as "VAT Tracker Scene", and active-object-name_proxy_scene - referred to as "VAT Proxy Scene"). If "Use Custom Proxy" is False, it also keeps the temporary VAT Basis (automatic proxy created from frame 1).
+## Features
 
-### Panel Operators
+### Normal Handling
+- **None:** No normal data.
+- **Packed:** Normals packed into same texture (RGBA).
+- **Separate:** Normals stored in a secondary texture.
 
-The main VAT creation operations, currently this is a blanket single operator "Create VAT" - which runs the creation and export process with settings defined in the panel.
+### Transform Handling
+- Encode relative to object space or world space.
 
-- **Create VAT:**
-  - This operator runs a large process consisting of multiple automatic processes and cleanup.
-    1. The Active Object and Custom Proxy (or frame 1 of the Active Object if proxy is not defined) are compared over the frame range to calculate the largest difference in X, Y, and Z of each vertex over the duration of the animation. A simple Geometry Node setup passing Position into "colPos" property exposes this vertex data from the dependency graph.
-    2. Min/Max Values are defined as float properties for each channel X, Y, Z based on the calculation above. These values are stored in `bpy.context.current_scene` properties (the scene the operation was run from). New properties are created if they do not exist (`x_min`, `x_max`, `y_min`, `y_max`, `z_min`, `z_max`).
-    3. JSON sidecar data is created containing the Min/Max values for Game Engine Shader handling.
-    4. Proxy Object is copied into a "Proxy Scene" named active-object + "proxy_scene" - to be safely referenced in the VAT Tracker geometry nodes in the next step. VAT_UV (new UV layer) is calculated and appended to the proxy object, ordering vertices to become functional with the resulting VAT.
-    5. VAT Tracker scene and VAT tracker are created. Another new scene is added, named active-object + "_vat". A camera is added to this scene, render properties and resolution are set. The VAT Tracker is created by appending a geometry node dependency contained within the extension to a new plane in the scene. Settings on this Geometry Node group are set in order to capture the relative object-space vertex positional data difference between the active-object and proxy. A single frame of this scene is rendered temporarily to the export location (named active-object-name + "_vat").
-    6. Compositing Nodes are set up and enabled in the VAT Tracker scene. The rendered image is loaded back into Blender as an image in the compositor, z-layered with the scene output from the VAT Tracker scene.
-    7. VAT Rendering - each frame as defined in the frame range is rendered through the compositor as an overlay (in raw space) of the previous frame. Each render accounts for all verts relative position on a single frame. The result is a vertex-over-time per pixel representation of animation.
-    8. Automatic Preview - the resulting VAT is set up on the proxy object via geometry node group `ov_vat_decoder_vs` and is copied back into the original scene.
-    9. Cleanup - if Debug is False, cleans up the appended and added content, leaving only the resulting VAT preview and removing the background work (scenes and objects) created.
+### Output
+- **Mesh Formats:** FBX, glTF (.glb or .gltf).
+- **Texture Formats:** 16-bit PNG or EXR (half-float).
+- **Includes:** UV mapping for VAT, optional mesh cleanup, optional proxy export.
+
+## Interface Breakdown
+
+### Encoding Panel (OpenVAT Encoding)
+- Select encode target: `Active Object` or `Collection (combined)`
+- Choose encoding mode: `OpenVAT Standard` or `Custom`
+- Define Proxy Method: `Start Frame`, `Current Frame`, or `Selected Object`
+- Normal Encoding, Attribute names (if custom), and Remap options
+
+### Output Panel
+- Set output directory
+- Choose image + mesh formats
+- View estimated resolution and vertex counts
+- Execute encoding
+
+## Encoding Workflow
+
+1. **Install Add-on** via Preferences.
+2. **Select Target:**
+   - Mesh or Collection.
+   - Choose encoding type.
+3. **Configure Settings:**
+   - Frame range
+   - Attribute remapping
+   - Normal packing, cleanup, transform
+4. **Set Output Directory**
+   - Choose image and mesh output formats
+5. **Click “Encode Vertex Animation Texture”**
+
+## File Output
+
+Given target `MyObject`, results are stored like:
+
+```
+/MyExportDir/
+└── MyObject_vat/
+    ├── MyObject.png             ← position+optional normal data
+    ├── MyObject-vnrm.png        ← (if separate normals)
+    ├── MyObject-remap_info.json← min/max metadata
+    └── MyObject.fbx/.glb/...    ← encoded proxy mesh
+```
 
 ## Previewing
-
 Immediately after VAT creation, a new object will be added to the scene as a copy of the proxy object with all modifiers stripped and the decoder modifier added. This will be added in the exact location as the active_object and is unselected by default. Hide or move the original and scrub the timeline or play the scene to see the vertex-encoded animation play.
+
+## Example Use Cases
+
+- Bake **geometry node animations** to textures for engine playback.
+- Export **destruction simulations** without heavy Alembic caches.
+- Drive **shader-based VFX** with procedural or dynamic meshes.
+
+## Developer & Export Notes
+
+- Blender coordinate system: `-Z Forward, Y Up`
+- EXR exports: 16-bit ZIP compression, no dithering
+- PNG exports: 16-bit RGBA, best compatibility
+- VAT Preview scene: auto-created and linked to “OpenVATPreview” collection
+- Scene cleanup: automatic post-encoding
 
 ### Engine Support
   - Unity Engine URP support and examples for OpenVat exist, but need documentation and walk-throughs.
