@@ -99,6 +99,8 @@ Immediately after VAT creation, a new object will be added to the scene as a cop
 - VAT Preview scene: auto-created and linked to “OpenVATPreview” collection
 - Scene cleanup: automatic post-encoding
 
+** Using tangent-space normal maps on VAT-animated meshes can be tricky. In most cases, it is recommended to use an object-space baked normal map for surface detail, and comine this with the animated VAT normal for proper surface lighting during deformation. This requires alteration to the default provided shaders.
+
 ### Engine Support
 ## Unity
 
@@ -111,4 +113,18 @@ Immediately after VAT creation, a new object will be added to the scene as a cop
     5. Press Process OpenVAT Content - Results in Prefab and Material being created in the same folder, with an automatically looping animation (at default speed) of your content
     6. Modify the base shaders and shader parameters for your use case - add surface texturing, set start/end frames, or set animated = false to define your specific desired frame via animation or scripting.
 
-  
+## Unreal 5
+
+*forward rendering only, I am working on a custom vertex factory for a modern approach to handling VATs in Unreal, along with specific VAT creation options to better utilize VAT in Niagara systems. Currently OpenVAT works in Unreal 5 without forward rendering enabled, however this can lead to undesired lighting issues on the VAT when using lit materials.
+
+Watch the walkthrough:
+https://www.youtube.com/watch?v=T1KVvUIduGI
+
+Download the zip from Engine_Tools/Unreal5 extract, then drop into the Content of your Unreal project (in system file explorer, not directly into engine UI)
+Tutorials and best-practices coming soon, getting all of this recorded. But in the meantime, drop these into a project and try it out!
+
+Your project must have forward rendering enabled  (currently)
+When you import your own vertex animation texture, make sure it's compression is set to RGB16
+Split your mesh on any hard edges before baking (I will be integrating tools to help with this process), this allows soft and hard edges during vertex sampling.
+This was built in UE5, and is NOT UE4 compatible at the moment.
+
