@@ -14,6 +14,9 @@
 - Auto-setup preview scene and cleanup.
 - Verified extension on the Blender Extensions platform.
 
+Curious to know more about VATS in general and this add-on was created? Check out my overview video:
+https://www.youtube.com/watch?v=eTBuDbZxwFg
+
 OpenVAT targets technical artists, shader developers, and studios aiming to bridge Blender simulations, procedural animation, or geometry nodes with performant in-engine playback.
 
 ## Key Concepts
@@ -97,7 +100,7 @@ Immediately after VAT creation, a new object will be added to the scene as a cop
 - Scene cleanup: automatic post-encoding
 
 ### Engine Support
-  - Unity Engine URP support and examples for OpenVat exist, but need documentation and walk-throughs.
+## Unity
 
 - **Adding the Unity Package**
   - In Unity's package manager, click "Add from Git URL" and paste https://github.com/sharpen3d/openvat-unity.git. This installs OpenVat into Packages of your project, including a custom window for automatic standard setup for basic and PBR usage.
@@ -106,21 +109,6 @@ Immediately after VAT creation, a new object will be added to the scene as a cop
     3. Point the Folder Path variable to the location of this folder within your Assets (will be something like Assets/myObject - always starting with "Assets/")
     4. **Optional:** Add standard PBR maps (if available) for your content - Basecolor, Roughness, Metalness, Normal, Emission, Ambient Occlusion *make sure to name maps approprately, see note below*
     5. Press Process OpenVAT Content - Results in Prefab and Material being created in the same folder, with an automatically looping animation (at default speed) of your content
+    6. Modify the base shaders and shader parameters for your use case - add surface texturing, set start/end frames, or set animated = false to define your specific desired frame via animation or scripting.
 
-**PBR NAMING**
-  - If PBR maps are included, use recognized PBR naming to let the script automatically apply these textures to your model
-  - These need to be in the same folder as the VAT content (the folder named your object name)
-  - PBR textures can always be added to the openVAT_decoder shader. If no PBR maps are found in your object folder, openVAT_decoder_basic shader is used (solid color) - to add maps, swap the shader to openVAT_decoder, then you can manually place maps in any of the slots
-
-Recognized naming conventions:
-basecolor = "_basecolor", "_albedo"
-normal = "_nrml", "_normal"
-roughness = "_roug", "_roughness"
-metallic = "_metl", "_metallic"
-ambient occlusion = "_ao", "_ambient", "_occlusion"
-emission = "_emis", "_emission"
-
-- **Notes**
-  - Vertex Normals (VNRM) are in an Experimental/Testing phase for unity and **may not work** at this time, these are disabled in the standard openVAT_decoder_basic, but are enabled in the PBR-accepting openVAT_decoder for testing purposes. Leaving VNRM blank in your material will have no adverse consequences.
-  
   
