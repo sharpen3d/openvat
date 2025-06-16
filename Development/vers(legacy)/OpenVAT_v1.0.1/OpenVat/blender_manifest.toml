@@ -1,0 +1,25 @@
+schema_version = "1.0.0"
+
+id = "openvat"
+version = "1.0.2"
+name = "OpenVAT"
+tagline = "Encode and preview vertex animation textures"
+maintainer = "Luke Stilson <stilson.luke@gmail.com>"
+type = "add-on"
+
+blender_version_min = "4.2.0"
+
+license = [
+  "SPDX:GPL-2.0-or-later",
+]
+
+tags = ["Import-Export", "Animation", "Geometry Nodes", "Game Engine"]
+
+ website = "https://github.com/sharpen3d/openvat"
+ copyright = [
+   "2024 Luke Stilson",
+ ]
+ platforms = ["windows-x64", "macos-arm64", "linux-x64"]
+
+ [permissions]
+ files = "Import/export VAT data from/to disk (in a location you specify)"
