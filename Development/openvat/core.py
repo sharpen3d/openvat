@@ -391,7 +391,8 @@ def export_vat_model(file_format='FBX', include_materials=False, include_tangent
             export_cameras=False,
             export_lights=False,
             export_extras=False,
-            will_save_settings=False
+            will_save_settings=False,
+            use_active_scene=True
         )
 
     else:
