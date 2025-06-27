@@ -27,25 +27,35 @@ varying vec3 v_vat_normal;
 void vertex() {
     // Get the current time and calculate the current frame
     float time = TIME;
+	float frameTime;
     int currentFrame;
-    
+	int nextFrame;
+
     if (ToggleAnimated) {
-        float frame_time = mod(time * Speed, float(FrameCount));
-        currentFrame = int(floor(frame_time));
+        frameTime = mod(time * Speed, float(FrameCount));
+        currentFrame = int(floor(frameTime));
+		nextFrame = (currentFrame + 1) % FrameCount;
     } else {
         currentFrame = frameSelect;
+		nextFrame = currentFrame;
     }
-    
+	
+	float blend = fract(frameTime);
+
     // Calculate the UV offset for the current frame
-    float UV_offset = float(currentFrame) * (1.0 / Y_resolution);
-    vec2 VAT_UV_offset = UV2 + vec2(0.0, UV_offset);
+	float frameStep = 1.0 / Y_resolution;
+    vec2 VAT_UV_offset = UV2 + vec2(0.0, float(currentFrame) * frameStep);
+	vec2 VAT_UV_offset_next = UV2 + vec2(0.0, float(nextFrame) * frameStep);
 
     // Pass the UV offset to the fragment shader
     v_vat_uv_offset = VAT_UV_offset;
 
     // Sample the VAT position texture using UV2
     vec3 VAT_position = texture(vat_position_texture, VAT_UV_offset).rgb;
-    
+	vec3 VAT_position_next = texture(vat_position_texture, VAT_UV_offset_next).rgb;
+	
+	VAT_position = mix(VAT_position, VAT_position_next, blend);
+
     // Remap each channel of the VAT position to object space individually
     vec3 object_space_position;
     object_space_position.x = minValues.x + VAT_position.x * (maxValues.x - minValues.x);
@@ -56,12 +66,14 @@ void vertex() {
     VERTEX += object_space_position;
 
     //// Sample the VAT normal texture and unpack the normals using UV2
-    vec3 VAT_normal = texture(vat_position_texture, VAT_UV_offset+.5f).rgb;
+    vec3 VAT_normal = texture(vat_position_texture, VAT_UV_offset + .5f).rgb;
+	vec3 VAT_normal_next = texture(vat_position_texture, VAT_UV_offset_next + .5f).rgb;
     VAT_normal = 2.0 * VAT_normal - 1.0; // Unpack the normals from [0, 1] to [-1, 1]
+	VAT_normal_next = 2.0 * VAT_normal_next - 1.0; // Unpack the normals from [0, 1] to [-1, 1]
     VAT_normal.r = -VAT_normal.r; // Flip the R channel
 
     // Pass the unpacked normals to the fragment shader
-    v_vat_normal = normalize(VAT_normal);
+    v_vat_normal = normalize(mix(VAT_normal,VAT_normal_next, blend));
 }
 
 void fragment() {
