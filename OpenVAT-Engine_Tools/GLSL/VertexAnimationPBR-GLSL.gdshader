@@ -49,8 +49,8 @@ void vertex() {
     // Remap each channel of the VAT position to object space individually
     vec3 object_space_position;
     object_space_position.x = minValues.x + VAT_position.x * (maxValues.x - minValues.x);
-    object_space_position.y = minValues.y + VAT_position.y * (maxValues.y - minValues.y);
-    object_space_position.z = minValues.z + VAT_position.z * (maxValues.z - minValues.z);
+    object_space_position.z = -1. * (minValues.y + VAT_position.y * (maxValues.y - minValues.y)); //Swap y and z axis from blender. Invert Y axis
+    object_space_position.y = minValues.z + VAT_position.z * (maxValues.z - minValues.z);
 
     // Apply the remapped position to the vertex
     VERTEX += object_space_position;
