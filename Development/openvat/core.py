@@ -46,33 +46,43 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
     tracker_plane.name = f"{obj_name}_vat-tracking"
     
     bpy.ops.object.modifier_add(type='NODES')
-    tracker_plane.modifiers["GeometryNodes"].node_group = bpy.data.node_groups[nodegroup_method]
-    tracker_plane.modifiers["GeometryNodes"]["Socket_4"] = bpy.data.objects[obj_name]
-    tracker_plane.modifiers["GeometryNodes"]["Socket_2"] = num_frames
-    tracker_plane.modifiers["GeometryNodes"]["Socket_10"] = num_wraps
-    tracker_plane.modifiers["GeometryNodes"]["Socket_8"] = width
-    tracker_plane.modifiers["GeometryNodes"]["Socket_9"] = height
-    tracker_plane.modifiers["GeometryNodes"]["Socket_11"] = bpy.data.objects[proxy_name]
-    tracker_plane.modifiers["GeometryNodes"]["Socket_6"] = original_scene['min_x']
-    tracker_plane.modifiers["GeometryNodes"]["Socket_7"] = original_scene['max_x']
-    tracker_plane.modifiers["GeometryNodes"]["Socket_12"] = original_scene['min_y']
-    tracker_plane.modifiers["GeometryNodes"]["Socket_13"] = original_scene['max_y']
-    tracker_plane.modifiers["GeometryNodes"]["Socket_14"] = original_scene['min_z']
-    tracker_plane.modifiers["GeometryNodes"]["Socket_15"] = original_scene['max_z']
-    tracker_plane.modifiers["GeometryNodes"]["Socket_19"] = vat_scene.frame_start
-    
+    mod = tracker_plane.modifiers[-1]  # Always the last added modifier
+    mod.name = "ov_tracking"  # Rename to a fixed, known string
+
+    # Now safely reference it by name
+    mod.node_group = bpy.data.node_groups[nodegroup_method]
+
+    mod["Socket_4"] = bpy.data.objects[obj_name]
+    mod["Socket_2"] = num_frames
+    mod["Socket_10"] = num_wraps
+    mod["Socket_8"] = width
+    mod["Socket_9"] = height
+    mod["Socket_11"] = bpy.data.objects[proxy_name]
+    mod["Socket_6"] = original_scene['min_x']
+    mod["Socket_7"] = original_scene['max_x']
+    mod["Socket_12"] = original_scene['min_y']
+    mod["Socket_13"] = original_scene['max_y']
+    mod["Socket_14"] = original_scene['min_z']
+    mod["Socket_15"] = original_scene['max_z']
+    mod["Socket_19"] = vat_scene.frame_start
+
+
     if use_custom:
-        tracker_plane.modifiers["GeometryNodes"]["Socket_23"] = True
-        tracker_plane.modifiers["GeometryNodes"]["Socket_20"] = custom_attribute
+        mod["Socket_23"] = True
+        mod["Socket_20"] = original_scene.vat_settings.custom_attr_1
+        mod["Socket_26"] = original_scene.vat_settings.custom_attr_2
+        mod["Socket_27"] = original_scene.vat_settings.custom_attr_3
         if custom_remap:
-            tracker_plane.modifiers["GeometryNodes"]["Socket_22"] = True
+            mod["Socket_22"] = True
     else:
         if bpy.data.scenes[original_scene.name].vat_settings.vat_normal_encoding == 'PACKED':
             normal_tracker = tracker_plane.copy()
             normal_tracker.data = tracker_plane.data.copy()
             vat_scene.collection.objects.link(normal_tracker)
             normal_tracker.location[1] = 0
-            normal_tracker.modifiers["GeometryNodes"]["Socket_17"] = True
+            normal_mod = normal_tracker.modifiers.get("ov_tracking")
+            if normal_mod:
+                normal_mod["Socket_17"] = True
         
         
 def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_normals, framestart):
@@ -110,7 +120,9 @@ def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_
     setup_vat_scene(proxy_obj, obj.name, original_scene.name, num_frames, width, height, num_wraps, pack_normals)
     
     # Get VAT Result
-    image_result = bpy.data.images[obj.name.replace("_ovbake", "") + "_vat." + original_scene.vat_settings.image_format.lower()]
+    base_format = ''.join(filter(str.isalpha, original_scene.vat_settings.image_format))
+    image_extension = '.' + base_format.lower()
+    image_result = bpy.data.images[obj.name.replace("_ovbake", "") + "_vat" + image_extension]
     
     
     bpy.context.window.scene = proxy_scene
@@ -126,19 +138,20 @@ def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_
     for modifier in vat_obj.modifiers[:]:
         vat_obj.modifiers.remove(modifier)
     bpy.ops.object.modifier_add(type='NODES')
-    vat_obj.modifiers[-1].node_group = bpy.data.node_groups["ov_vat-decoder-vs"]
+    mod = vat_obj.modifiers[-1]
+    mod.node_group = bpy.data.node_groups["ov_vat-decoder-vs"]
     
-    vat_obj.modifiers["GeometryNodes"]["Socket_2_attribute_name"] = "VAT_UV"
-    vat_obj.modifiers["GeometryNodes"]["Socket_6"] = num_frames
-    vat_obj.modifiers["GeometryNodes"]["Socket_7"] = height
-    vat_obj.modifiers["GeometryNodes"]["Socket_9"] = image_result
-    vat_obj.modifiers["GeometryNodes"]["Socket_3"] = original_scene['min_x']
-    vat_obj.modifiers["GeometryNodes"]["Socket_4"] = original_scene['max_x']
-    vat_obj.modifiers["GeometryNodes"]["Socket_10"] = original_scene['min_y']
-    vat_obj.modifiers["GeometryNodes"]["Socket_11"] = original_scene['max_y']
-    vat_obj.modifiers["GeometryNodes"]["Socket_12"] = original_scene['min_z']
-    vat_obj.modifiers["GeometryNodes"]["Socket_13"] = original_scene['max_z']
-    vat_obj.modifiers["GeometryNodes"]["Socket_14"] = original_scene.frame_start
+    mod["Socket_2_attribute_name"] = "VAT_UV"
+    mod["Socket_6"] = num_frames
+    mod["Socket_7"] = height
+    mod["Socket_9"] = image_result
+    mod["Socket_3"] = original_scene['min_x']
+    mod["Socket_4"] = original_scene['max_x']
+    mod["Socket_10"] = original_scene['min_y']
+    mod["Socket_11"] = original_scene['max_y']
+    mod["Socket_12"] = original_scene['min_z']
+    mod["Socket_13"] = original_scene['max_z']
+    mod["Socket_14"] = original_scene.frame_start
 
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
@@ -190,32 +203,39 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
     vat_scene.view_settings.view_transform = 'Raw'
     vat_scene.render.film_transparent = True
     
-    if original_scene.vat_settings.image_format == 'PNG':
-        # Based on settings
-        vat_scene.render.image_settings.file_format = 'PNG'
-        vat_scene.render.image_settings.color_mode = 'RGBA'
-    
-    elif original_scene.vat_settings.image_format == 'EXR':
-        vat_scene.render.image_settings.file_format = 'OPEN_EXR'
-        vat_scene.render.image_settings.color_mode = 'RGBA'
+    fmt = original_scene.vat_settings.image_format
+    img_settings = vat_scene.render.image_settings
+
+    if fmt in {'PNG8', 'PNG16'}:
+        img_settings.file_format = 'PNG'
+        img_settings.color_mode = 'RGBA'
+        img_settings.color_depth = '16'
+        img_settings.compression = 0
+
+    elif fmt in {'EXR16', 'EXR32'}:
+        img_settings.file_format = 'OPEN_EXR'
+        img_settings.color_mode = 'RGBA'
+        img_settings.color_depth = '32'
+        img_settings.exr_codec = 'NONE'
         
     # Extension-Agnostic
-    vat_scene.render.image_settings.color_depth = '16'
     vat_scene.render.image_settings.compression = 0
     vat_scene.render.dither_intensity = 0
     vat_scene.render.use_compositing = False
     vat_scene.render.use_sequencer = False
     vat_scene.eevee.taa_render_samples = 1
     
-    image_format = '.' + original_scene.vat_settings.image_format.lower()
+    base_format = ''.join(filter(str.isalpha, fmt))
+    image_format = '.' + base_format.lower()
         
     original_scene = bpy.data.scenes[original_scene_name]
     os.makedirs(output_dir, exist_ok=True)
-    render_vat_scene(vat_scene, 0, output_dir, image_format)
+    render_vat_scene(vat_scene, 0, output_dir, image_format, fmt)
     vat_scene.render.use_compositing = True
     
     # Set compositing nodes in VAT scene
-    setup_compositing(vat_scene, output_dir, vat_scene.name, proxy_obj, image_format)
+    setup_compositing(vat_scene, output_dir, vat_scene.name, proxy_obj, image_format, fmt)
+
     nodegroup_method = "ov_calculate-position-vs"
     
     encode_settings = original_scene.vat_settings
@@ -231,18 +251,33 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
     setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps, proxy_obj.name, original_scene, nodegroup_method, pack_normals, use_custom, custom_attribute, custom_remap)
     print ("VAT Tracker Created")
     print ("Starting render process...")
+    
+    
     # Render VAT   
-    render_vat_scene(vat_scene, num_frames, output_dir, image_format)
+    render_vat_scene(vat_scene, num_frames, output_dir, image_format, fmt)
+
+    output_name = vat_scene.name.replace("_ovbake", "")
+    output_path = os.path.join(output_dir, f"{output_name}", f"{output_name}{image_format}")
+    vat_scene.render.filepath = output_path
+
+    #un-normalize
+    if original_scene.vat_settings.image_format == "EXR32":
+        if original_scene.vat_settings.no_remap:
+            setup_unnormalize(vat_scene,original_scene,"os-remap")
+            bpy.ops.render.render(write_still=True)
+            bpy.data.images[output_name+".exr"].reload()
+    
+    # Render VNRM
     if not pack_normals: 
         if bpy.data.scenes[original_scene_name].vat_settings.encode_type == 'DEFAULT':
             if bpy.data.scenes[original_scene_name].vat_settings.vat_normal_encoding != 'NONE':
                 print ("Starting normals render process...")
-                bpy.context.object.modifiers["GeometryNodes"]["Socket_17"] = True
+                bpy.context.obaaject.modifiers[-1]["Socket_17"] = True
                 rendername = vat_scene.name.replace("_ovbake_vat", "_vnrm")
                 vat_scene.render.use_compositing = False
             
                 # Prep
-                render_vat_nrml(vat_scene, 0, output_dir, image_format)
+                render_vat_nrml(vat_scene, 0, output_dir, image_format, fmt)
                 vat_scene.render.use_compositing = True
                 tree = vat_scene.node_tree
                 image_node = tree.nodes["Image"]
@@ -251,35 +286,134 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
                 image.colorspace_settings.name = 'Non-Color'
                 
                 #Render
-                render_vat_nrml(vat_scene, num_frames, output_dir, image_format)   
+                render_vat_nrml(vat_scene, num_frames, output_dir, image_format, fmt)   
     
 # Set up compositing for the per frame capture overlay in the vat scene
-def setup_compositing(vat_scene, output_dir, scene_name, proxy_obj, image_format):
+def setup_compositing(vat_scene, output_dir, scene_name, proxy_obj, image_format, raw_format):
     vat_scene.use_nodes = True
     tree = vat_scene.node_tree
-    links = tree.links              
+    links = tree.links
+
+    # Clear all existing nodes
     for node in tree.nodes:
         tree.nodes.remove(node)
+
+    # Create nodes
     render_layers_node = tree.nodes.new(type="CompositorNodeRLayers")
     image_node = tree.nodes.new(type="CompositorNodeImage")
-    zcombine_node = tree.nodes.new(type="CompositorNodeZcombine")
+    alpha_over_node = tree.nodes.new(type="CompositorNodeAlphaOver")
     composite_node = tree.nodes.new(type="CompositorNodeComposite")
-    links.new(render_layers_node.outputs[0], zcombine_node.inputs[2])
-    links.new(image_node.outputs[0], zcombine_node.inputs[0])
-    links.new(zcombine_node.outputs[0], composite_node.inputs[0])
-    image = bpy.data.images.get(vat_scene.name.replace("_ovbake", "") + image_format)
+
+    # Load previously composited image
+    image_name = vat_scene.name.replace("_ovbake", "") + image_format
+    image = bpy.data.images.get(image_name)
+    if not image:
+        print(f"Image not found: {image_name}")
+        return
+
     image_node.image = image
     image.colorspace_settings.name = 'Non-Color'
-    zcombine_node.use_alpha = True
-    zcombine_node.use_antialias_z = False
-    print("VAT Compositing Nodes sucessfully set in " + str(vat_scene))
+
+    # Setup Alpha Over node
+    alpha_over_node.use_premultiply = False
+    alpha_over_node.premul = 1.0
+    alpha_over_node.inputs['Fac'].default_value = 1.0  # Always use alpha from the foreground
+
+    # Connect nodes
+    links.new(image_node.outputs[0], alpha_over_node.inputs[1])              # Background (previous image)
+    links.new(render_layers_node.outputs[0], alpha_over_node.inputs[2])     # Foreground (current render)
+    links.new(alpha_over_node.outputs[0], composite_node.inputs[0])         # Final output
+
+def setup_unnormalize(vat_scene, original_scene, attribute_name):
+    if not vat_scene.use_nodes:
+        vat_scene.use_nodes = True
+
+    tree = vat_scene.node_tree
+    if tree is None:
+        print("❌ No compositor node tree available.")
+        return
+
+    links = tree.links
+
+    # Clear existing nodes
+    for node in tree.nodes:
+        tree.nodes.remove(node)
+
+    # Load per-channel remap min/max from original_scene custom properties
+    min_x = original_scene['min_x']
+    min_y = original_scene['min_y']
+    min_z = original_scene['min_z']
+    max_x = original_scene['max_x']
+    max_y = original_scene['max_y']
+    max_z = original_scene['max_z']
+
+    # Load baked EXR
+    image_name = vat_scene.name.replace("_ovbake", "") + ".exr"
+    image = bpy.data.images.get(image_name)
+    if not image:
+        print(f"Image not found: {image_name}")
+        return
+    image.colorspace_settings.name = 'Non-Color'
+    image.use_half_precision = False
+
+    # Create nodes
+    image_node = tree.nodes.new("CompositorNodeImage")
+    separate_node = tree.nodes.new("CompositorNodeSepRGBA")
+    combine_node = tree.nodes.new("CompositorNodeCombRGBA")
+    composite_node = tree.nodes.new("CompositorNodeComposite")
+
+    image_node.image = image
+
+    links.new(image_node.outputs[0], separate_node.inputs[0])
+
+    for i, (min_val, max_val) in enumerate([(min_x, max_x), (min_y, max_y), (min_z, max_z)]):
+        map_range = tree.nodes.new("CompositorNodeMapRange")
+        map_range.inputs['From Min'].default_value = 0.0
+        map_range.inputs['From Max'].default_value = 1.0
+        map_range.inputs['To Min'].default_value = min_val
+        map_range.inputs['To Max'].default_value = max_val
+        map_range.use_clamp = False
+        map_range.location = (300, -120 * i)
+
+        links.new(separate_node.outputs[i], map_range.inputs[0])
+        links.new(map_range.outputs[0], combine_node.inputs[i])
+
+    # Pass alpha through directly
+    links.new(separate_node.outputs[3], combine_node.inputs[3])
+
+    # Output to Composite
+    links.new(combine_node.outputs[0], composite_node.inputs[0])
+
+    print("✅ Unnormalize-only compositing setup complete using Map Range nodes.")
 
 # Called to render temporary frames to first prime the compositor, then through sequence for vat and optionally vnrm    
-def render_vat_scene(vat_scene, num_frames, output_dir, image_format):
+def render_vat_scene(vat_scene, num_frames, output_dir, image_format, raw_format):
     start_frame = vat_scene.frame_start
     end_frame = vat_scene.frame_start + num_frames
     output_name = vat_scene.name.replace("_ovbake", "")
     output_path = os.path.join(output_dir, f"{output_name}", f"{output_name}{image_format}")
+    img_settings = vat_scene.render.image_settings
+    
+    if raw_format == 'PNG8':
+        img_settings.color_mode = 'RGB'
+        img_settings.color_depth = '8'
+        img_settings.compression = 0
+
+    elif raw_format == 'PNG16':
+        img_settings.color_mode = 'RGB'
+        img_settings.color_depth = '16'
+        img_settings.compression = 0
+
+    elif raw_format == 'EXR16':
+        img_settings.color_mode = 'RGB'
+        img_settings.color_depth = '16'
+        img_settings.exr_codec = 'ZIP'
+
+    elif raw_format == 'EXR32':
+        img_settings.color_mode = 'RGBA'
+        img_settings.color_depth = '32'
+        img_settings.exr_codec = 'NONE'
+
     nrmoutput_path = os.path.join(output_dir, f"{output_name}", vat_scene.name.replace("_vat", "_vnrm") + image_format)
     if os.path.exists(output_path):
         bpy.data.images.remove(bpy.data.images.load(output_path))
@@ -293,28 +427,49 @@ def render_vat_scene(vat_scene, num_frames, output_dir, image_format):
         else:
             img = bpy.data.images.load(output_path)
             print(f"Rendered template frame for compositing {frame}")
-            
-    vat_scene.render.image_settings.color_mode = 'RGB'
+        if 'EXR' in raw_format:
+            img.use_half_precision = False
+
     img = bpy.data.images.load(output_path)
     if img is not None:
         img.reload()
+        if 'EXR' in raw_format:
+            img.use_half_precision = False
         vat_scene.render.filepath = output_path
         bpy.ops.render.render(write_still=True)
-        
-        #Reset Color Mode
-        bpy.context.scene.render.image_settings.color_mode = 'RGBA'
-        
-        ## If Custom Scalar...
 
     print(f"VAT Encoding finished, exported to {output_dir}")
     
 # Similar to render_vat_scene above, but to a new texture name
-def render_vat_nrml(vat_scene, num_frames, output_dir, image_format):
+def render_vat_nrml(vat_scene, num_frames, output_dir, image_format, raw_format):
     start_frame = vat_scene.frame_start
     end_frame = vat_scene.frame_start + num_frames
     output_name = vat_scene.name.replace("_ovbake", "")
     rendername = output_name.replace("_vat", "_vnrm")
     output_path = os.path.join(output_dir, f"{output_name}", f"{rendername}{image_format}")
+    img_settings = vat_scene.render.image_settings
+
+    if raw_format == 'PNG8':
+        img_settings.color_mode = 'RGB'
+        img_settings.color_depth = '8'
+        img_settings.compression = 0
+
+    elif raw_format == 'PNG16':
+        img_settings.color_mode = 'RGB'
+        img_settings.color_depth = '16'
+        img_settings.compression = 0
+
+    elif raw_format == 'EXR16':
+        img_settings.color_mode = 'RGB'
+        img_settings.color_depth = '16'
+        img_settings.exr_codec = 'ZIP'
+
+    elif raw_format == 'EXR32':
+        img_settings.color_mode = 'RGB'
+        img_settings.color_depth = '32'
+        img_settings.exr_codec = 'NONE'
+
+
     if os.path.exists(output_path):
         bpy.data.images.remove(bpy.data.images.load(output_path)) 
     for frame in range(start_frame -1, end_frame):
@@ -327,8 +482,8 @@ def render_vat_nrml(vat_scene, num_frames, output_dir, image_format):
         else:
             img = bpy.data.images.load(output_path)
             print(f"Rendered template frame for normals compositing {frame}")
-    
-    vat_scene.render.image_settings.color_mode = 'RGB'
+   
+
     img = bpy.data.images.load(output_path)
     if img is not None:
         img.reload()
@@ -391,7 +546,8 @@ def export_vat_model(file_format='FBX', include_materials=False, include_tangent
             export_cameras=False,
             export_lights=False,
             export_extras=False,
-            will_save_settings=False
+            will_save_settings=False,
+            use_active_scene=True 
         )
 
     else:

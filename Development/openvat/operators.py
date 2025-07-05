@@ -1,5 +1,6 @@
 import bpy
 import os
+import bmesh
 from . import utils, core
 
 class OBJECT_OT_OpenOutputDirectory(bpy.types.Operator):
@@ -29,10 +30,39 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         blend_filepath = bpy.data.filepath
         export_directory = bpy.path.abspath(context.scene.vat_settings.vat_output_directory)
         selected_temp = None
+
+        # Validate custom attributes
+        if settings.encode_type == 'CUSTOM':
+            custom_obj = context.view_layer.objects.active
+            attr_names = [settings.custom_attr_1, settings.custom_attr_2, settings.custom_attr_3]
+        
+            missing = []
+            depsgraph = context.evaluated_depsgraph_get()
+            eval_obj = custom_obj.evaluated_get(depsgraph)
+            eval_mesh = eval_obj.to_mesh()
+
+            try:
+                attr_names_mesh = [a.name for a in eval_mesh.attributes]
+                for name in attr_names:
+                    if name != "NONE" and name not in attr_names_mesh:
+                        missing.append(name)
+            finally:
+                eval_obj.to_mesh_clear()
+
+            if missing:
+                self.report({'ERROR'}, f"Missing attributes: {', '.join(missing)}. Please rescan.")
+                return {'CANCELLED'}
+
         if settings.proxy_method == 'START_FRAME':
             
             context.scene.frame_current = context.scene.frame_start
-
+        
+        if settings.proxy_method == 'SELECTED_OBJECT':
+            selected_objects = bpy.context.selected_objects
+            active_object = bpy.context.active_object
+            if len(selected_objects) != 2 or active_object not in selected_objects:
+                print("Exactly 2 objects must be selected, including the active one.")
+                return {'FINISHED'}
         collection_mode = False
         collection_target = ""
         custom_proxy = False
@@ -54,15 +84,17 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
             else:
                 print("Exactly two objects must be sel ected.")
         
-        if settings.encode_target == 'COLLECTION_COMBINE': # Collection target only valid when collection_mode is true
-            collection_mode = True
-            collection_target = settings.vat_collection.name
+        if settings.encode_type != 'CUSTOM':
+            if settings.encode_target == 'COLLECTION_COMBINE': # Collection target only valid when collection_mode is true
+                collection_mode = True
+                collection_target = settings.vat_collection.name
 
         core.create_geo_nodes_bake(use_collection=collection_mode, collection_name=collection_target)
         obj = context.view_layer.objects.active
         obj_name = obj.name
-            
+
         # Perform Normal-Safe Edge Split on new object
+
         if settings.vat_normal_encoding != 'NONE':
             if settings.rip_edges:
                 utils.rip_hard_edges(obj)
@@ -130,19 +162,36 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         # Execute the saturation remapping
         if settings.encode_type == 'DEFAULT':
             attribute_name = "colPos"
+            utils.make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath, "")
+
+            min_x, min_y, min_z, max_x, max_y, max_z = utils.read_remap_info(remap_output_filepath, attribute_name)
+            context.scene['min_x'] = min_x
+            context.scene['min_y'] = min_y
+            context.scene['min_z'] = min_z
+            context.scene['max_x'] = max_x
+            context.scene['max_y'] = max_y
+            context.scene['max_z'] = max_z
+
         else:
-            attribute_name = settings.user_attribute
-            
-        utils.make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath, "")
-        
-        #! Should update to better usage, not in scene props
-        min_x, min_y, min_z, max_x, max_y, max_z = utils.read_remap_info(remap_output_filepath, attribute_name)
-        context.scene['min_x'] = min_x
-        context.scene['min_y'] = min_y
-        context.scene['min_z'] = min_z
-        context.scene['max_x'] = max_x
-        context.scene['max_y'] = max_y
-        context.scene['max_z'] = max_z
+            attr_r = settings.custom_attr_1
+            attr_g = settings.custom_attr_2
+            attr_b = settings.custom_attr_3
+
+            utils.make_custom_data(obj_name, [attr_r, attr_g, attr_b], frame_start, frame_end, output_filepath, remap_output_filepath)
+            attrs = [
+                settings.custom_attr_1,
+                settings.custom_attr_2,
+                settings.custom_attr_3,
+            ]
+
+            min_r, min_g, min_b, max_r, max_g, max_b = utils.read_custom_info(remap_output_filepath, attrs)
+
+            context.scene['min_x'] = min_r
+            context.scene['min_y'] = min_g
+            context.scene['min_z'] = min_b
+            context.scene['max_x'] = max_r
+            context.scene['max_y'] = max_g
+            context.scene['max_z'] = max_b
         
         num_vertices = len(obj.data.vertices)
         frame_start = context.scene.frame_start
@@ -153,9 +202,19 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         # Encode Normals
         if settings.encode_type == 'CUSTOM':
             pack_normals = False
-            width, height, num_wraps = utils.calculate_optimal_vat_resolution(num_vertices, num_frames)
+            if settings.use_single_row:
+                width = num_vertices
+                height = num_frames
+                num_wraps = 1
+            else:
+                width, height, num_wraps = utils.calculate_optimal_vat_resolution(num_vertices, num_frames)   
         elif settings.vat_normal_encoding == 'PACKED':
-            width, height, num_wraps = utils.calculate_packed_vat_resolution(num_vertices, num_frames)   
+            if settings.use_single_row:
+                width = num_vertices
+                height = num_frames * 2
+                num_wraps = 1
+            else:
+                width, height, num_wraps = utils.calculate_packed_vat_resolution(num_vertices, num_frames)   
         else:
             if settings.use_single_row:
                 width = num_vertices
@@ -186,4 +245,47 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
     
         return {'FINISHED'}
 
-classes = [OBJECT_OT_CalculateVATResolution, OBJECT_OT_OpenOutputDirectory]
+class OBJECT_OT_ScanFloatPointAttributes(bpy.types.Operator):
+    bl_idname = "object.scan_attributes"
+    bl_label = "Scan Float Attributes"
+    bl_description = "Scan the active object for float point attributes"
+
+    def execute(self, context):
+        obj = context.active_object
+        if not obj or obj.type != 'MESH':
+            self.report({'WARNING'}, "No valid mesh selected")
+            return {'CANCELLED'}
+
+        # NEW: safe evaluated attribute scan
+        items = utils.get_evaluated_point_float_attributes(context)
+
+        if not items:
+            items = [("NONE", "None", "")]
+
+        # Pre-clear selection to make enums update
+        settings = context.scene.vat_settings
+        settings.custom_attr_1 = "NONE"
+        settings.custom_attr_2 = "NONE"
+        settings.custom_attr_3 = "NONE"
+
+        # Cache
+        utils._openvat_enum_cache["1"] = items
+        utils._openvat_enum_cache["2"] = items
+        utils._openvat_enum_cache["3"] = items
+
+        # Auto-assign
+        valid_names = [i[0] for i in items if i[0] != "NONE"]
+        if len(valid_names) > 0:
+            settings.custom_attr_1 = valid_names[0]
+        if len(valid_names) > 1:
+            settings.custom_attr_2 = valid_names[1]
+        if len(valid_names) > 2:
+            settings.custom_attr_3 = valid_names[2]
+
+        self.report({'INFO'}, f"Found {len(valid_names)} attribute(s)")
+        return {'FINISHED'}
+
+
+
+
+classes = [OBJECT_OT_CalculateVATResolution, OBJECT_OT_OpenOutputDirectory, OBJECT_OT_ScanFloatPointAttributes]

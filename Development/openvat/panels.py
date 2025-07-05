@@ -1,6 +1,7 @@
 import bpy
 import os
 from . import utils
+from . import operators
 
 class OBJECT_PT_VAT_OPTIONS(bpy.types.Panel):
     bl_idname = "OBJECT_PT_vat_options"
@@ -32,7 +33,11 @@ class OBJECT_PT_VAT_OPTIONS(bpy.types.Panel):
         grid.separator()
         grid.prop(scene, "frame_end", text="End")
         
+        row = layout.row()
         layout.separator()
+        row = layout.row()
+        row.label(text="Vertex Data", icon='RNA')
+        row.prop(settings, "encode_type", text="")
         
         if settings.encode_type == 'DEFAULT':
             row = layout.row()
@@ -43,40 +48,36 @@ class OBJECT_PT_VAT_OPTIONS(bpy.types.Panel):
             row = layout.row(align=True)
             row.label(text="Transform")
             row.prop(settings, "vat_transform", expand=True)
-            row = layout.row()
-            row.prop(settings, "clean_mesh", text="Strip Vertex Data") 
             layout.separator()
             row = layout.row()
             row.label(text="Vertex Normals", icon='NORMALS_VERTEX')
             row = layout.row()
             row.prop(settings, "vat_normal_encoding", text="")
-            row = layout.row()
-            row.prop(settings, "rip_edges")
-            row = layout.row()
-            row.prop(settings, "use_single_row")
-       
-        else:
-            box = layout.box()
-            row = box.row()
-            row.label(text="Custom Data", icon="RNA")
-            grid = box.grid_flow(row_major=True, columns=2, even_columns=True, even_rows=True, align=True)
-            grid.label(text="Custom Vector (RGB)")
-            grid.prop(settings, "user_attribute", text="")
-            grid = box.grid_flow(row_major=True, columns=2, even_columns=True, even_rows=True, align=True)
-            grid.label(text="Custom Float (A)")
-            grid.prop(settings, "user_scalar", text="")
-        
-        
+
             layout.separator()
             row = layout.row()
             row.label(text="Mesh Settings", icon="SETTINGS")
-            row = layout.row(align=True)
-            row.label(text="Transform")
-            row.prop(settings, "vat_transform", expand=True)
+
             row = layout.row()
-            row.prop(settings, "clean_mesh", text="Strip Vertex Data") 
+            row.prop(settings, "clean_mesh", text="Strip Vertex Data", toggle=True) 
             row = layout.row()
-            row.prop(settings, "rip_edges")
+            row.prop(settings, "rip_edges", toggle=True)
+       
+        else:
+            box = layout.box()
+            box.operator("object.scan_attributes", text="Scan For Attributes", icon='VIEWZOOM')
+            box.prop(settings, "custom_attr_1", text="R Channel")
+            box.prop(settings, "custom_attr_2", text="G Channel")
+            box.prop(settings, "custom_attr_3", text="B Channel")
+
+            layout.separator()
+            row = layout.row()
+            row.label(text="Mesh Settings", icon="SETTINGS")
+
+            row = layout.row()
+            row.prop(settings, "clean_mesh", text="Strip Vertex Data", toggle=True) 
+            row = layout.row()
+            row.prop(settings, "rip_edges", toggle=True)
         
 # Output Settings - relating to data being exported      
 class OBJECT_PT_VAT_OUTPUT(bpy.types.Panel):
@@ -140,6 +141,11 @@ class OBJECT_PT_VAT_OUTPUT(bpy.types.Panel):
             grid.prop(settings, "mesh_format", text="")
         grid.label(text="Image Format")
         grid.prop(settings, "image_format", text="")
+        row = layout.row()
+        row.prop(settings, "use_single_row", toggle=True)
+        if settings.image_format == 'EXR32':
+            row = layout.row()
+            row.prop(settings, "no_remap", text="Use Absolute Values", toggle=True)
         box = layout.box()
         row = box.row()
         row.prop(settings, "show_encoding_info", icon="INFO_LARGE", emboss=False)
@@ -160,51 +166,52 @@ class OBJECT_PT_VAT_OUTPUT(bpy.types.Panel):
                     
             num_frames = scene.frame_end - scene.frame_start + 1
             
-            if settings.vat_normal_encoding == 'PACKED' and bpy.context.scene.vat_settings.encode_type == 'DEFAULT':
-                width, height, _ = utils.calculate_packed_vat_resolution(num_vertices, num_frames)
+            # Determine resolution
+            if settings.use_single_row and settings.encode_type == 'DEFAULT':
+                width = num_vertices 
+                height = num_frames * (2 if settings.vat_normal_encoding == 'PACKED' else 1)
+                maxwidth = max_verts 
+                maxheight = num_frames * (2 if settings.vat_normal_encoding == 'PACKED' else 1)
             else:
-                width, height, _ = utils.calculate_optimal_vat_resolution(num_vertices, num_frames)
-            
-            if settings.vat_normal_encoding == 'PACKED' and bpy.context.scene.vat_settings.encode_type == 'DEFAULT':
-                maxwidth, maxheight, _ = utils.calculate_packed_vat_resolution(max_verts, num_frames)
-            else:
-                maxwidth, maxheight, _ = utils.calculate_optimal_vat_resolution(max_verts, num_frames)
-            
-            if settings.encode_target != "ACTIVE_OBJECT":     
+                if settings.vat_normal_encoding == 'PACKED' and bpy.context.scene.vat_settings.encode_type == 'DEFAULT':
+                    width, height, _ = utils.calculate_packed_vat_resolution(num_vertices, num_frames)
+                    maxwidth, maxheight, _ = utils.calculate_packed_vat_resolution(max_verts, num_frames)
+                else:
+                    width, height, _ = utils.calculate_optimal_vat_resolution(num_vertices, num_frames)
+                    maxwidth, maxheight, _ = utils.calculate_optimal_vat_resolution(max_verts, num_frames)
+
+            # Encode target info
+            if settings.encode_target != "ACTIVE_OBJECT":
                 box = layout.box()
                 box.label(text=f"Encode Target: {settings.vat_collection.name}", icon='OUTLINER_COLLECTION')
             else:
-                if settings.vat_collection != None:
+                if settings.vat_collection is not None:
                     box = layout.box()
-                    box.label(text=f"Encode Target: {obj.name}", icon='MESH_DATA') 
+                    box.label(text=f"Encode Target: {obj.name}", icon='MESH_DATA')
+
             row = box.row()
             row.label(text=f"Total Frames: {num_frames}", icon='ANIM')
-            if settings.vat_normal_encoding != 'NONE':
-                if settings.rip_edges:
-                    use_range = True
-                else:
-                    use_range = False
-            else:
-                use_range = False
+
+            # Edge split / range check
+            use_range = settings.vat_normal_encoding != 'NONE' and settings.rip_edges
+
             if use_range:
-                row=box.row()
-                row.label(text=f"Estimated Min-Max (Edge-split Potential)", icon = 'INFO_LARGE')
+                box.row().label(text="Estimated Min-Max (Edge-split Potential)", icon='INFO_LARGE')
+                box.row().label(text=f"Vertices: {num_vertices} - {max_verts}", icon='VERTEXSEL')
+            else:
+                box.row().label(text=f"Vertices: {num_vertices}", icon='VERTEXSEL')
+
+            # Resolution reporting
+            if settings.encode_target != "COLLECTION_BATCH":
+                label = f"Resolution: {width} x {height}" if not use_range else f"Resolution: {width} x {height} - {maxwidth} x {maxheight}"
                 row = box.row()
-                row.label(text=f"Vertices: {num_vertices} - {max_verts}", icon='VERTEXSEL')
-                if settings.encode_target != "COLLECTION_BATCH":
+                row.label(text=label, icon='FILE_IMAGE' if use_range else 'IMAGE_DATA')
+                if settings.use_single_row:
                     row = box.row()
-                    row.label(text=f"Resolution: {width} x {height} - {maxwidth} x {maxheight}", icon='FILE_IMAGE')
-                else:
-                    row = box.row()
-                    row.label(text=f"Resolution calculated per batch object", icon="OUTLINER_OB_IMAGE")
+                    row.label(text="Single Row Mode Enabled", icon='SEQ_LUMA_WAVEFORM')
             else:
                 row = box.row()
-                row.label(text=f"Vertices: {num_vertices}", icon='VERTEXSEL')
-                if settings.encode_target != "COLLECTION_BATCH":
-                    row = box.row()
-                    row.label(text=f"Resolution: {width} x {height}")
-                else:
-                    row = box.row()
-                    row.label(text=f"Resolution calculated per batch object", icon="OUTLINER_OB_IMAGE")                    
+                row.label(text="Resolution calculated per batch object", icon="OUTLINER_OB_IMAGE")
+                
 
 classes = [OBJECT_PT_VAT_OPTIONS, OBJECT_PT_VAT_OUTPUT]

@@ -1,4 +1,13 @@
 import bpy
+from . import utils
+
+def make_dynamic_enum(idname):
+    def callback(self, context):
+        base = utils._openvat_enum_cache.get(idname, [])
+        if not base or base[0][0] != "NONE":
+            base.insert(0, ("NONE", "None", ""))
+        return base
+    return callback
 
 class VATSettings(bpy.types.PropertyGroup):
     vat_output_directory: bpy.props.StringProperty(
@@ -18,6 +27,22 @@ class VATSettings(bpy.types.PropertyGroup):
         name="Use Custom Proxy",
         description="Selected object acts as proxy - which can be thought of as a deformation basis. This will become the static mesh which vat encoding is relative to. Custom Proxy MUST have the exact vert count/order as the Target. Automatic Edge splitting is not applied to proxy objects.",
         default=False
+    )
+
+    custom_attr_1: bpy.props.EnumProperty(
+        name="Attribute 1",
+        description="First scalar float attribute",
+        items=make_dynamic_enum("1"),
+    )
+    custom_attr_2: bpy.props.EnumProperty(
+        name="Attribute 2",
+        description="Second scalar float attribute",
+        items=make_dynamic_enum("2"),
+    )
+    custom_attr_3: bpy.props.EnumProperty(
+        name="Attribute 3",
+        description="Third scalar float attribute",
+        items=make_dynamic_enum("3"),
     )
     
     vat_transform: bpy.props.EnumProperty(
@@ -57,8 +82,8 @@ class VATSettings(bpy.types.PropertyGroup):
         name="Encoding Mode",
         description="Encode custom attributes",
         items=[
-            ('DEFAULT', "OpenVAT Standard", "Export vat-compatible mesh as .fbx"),
-            ('CUSTOM', "Custom", "Choose custom attributes to encode"),
+            ('DEFAULT', "Standard (Position/Normal)", "Standard (Position/Normal)"),
+            ('CUSTOM', "Custom Attributes (float[3])", "Choose custom attributes to encode to RGB"),
         ],
         default='DEFAULT'
     )
@@ -126,10 +151,12 @@ class VATSettings(bpy.types.PropertyGroup):
         name="Image Format",
         description="Choose VAT image format (always RGB16)",
         items=[
-            ('PNG', "PNG", "Lossless PNG with 16 bit color-depth"),
-            ('EXR', "EXR", "Lossless OpenEXR Float (half) in ZIP Codec with 16 bit color-depth"),
+            ('PNG8', "PNG8", "PNG with 8 bit color-depth | RGB8"),
+            ('PNG16', "PNG16", "PNG with 16 bit color-depth | RGB16"),
+            ('EXR16', "EXR16", "Recommended | OpenEXR Float (half) in ZIP Codec with 16 bit color-depth | RGB16(half)"),
+            ('EXR32', "EXR32", "OpenEXR Float (half) Full Precision in ZIP Codec with 32 bit color-channels | RGB16(full)")
         ],
-        default='PNG'
+        default='EXR16'
     )
     
     vat_collection: bpy.props.PointerProperty(
@@ -154,5 +181,12 @@ class VATSettings(bpy.types.PropertyGroup):
         description="Width of VAT in pixels becomes vertex count, height of VAT becomes frame count (exact)",
         default=True
     )
+
+    no_remap: bpy.props.BoolProperty(
+        name="No Remap",
+        description="Output in full precision, outside of 0-1 range (useful for Niagara and VFX systems)",
+        default=False
+    )
+
 
 classes = [VATSettings]

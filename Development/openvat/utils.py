@@ -17,6 +17,41 @@ def ensure_node_group(group_name):
     if group_name not in bpy.data.node_groups:
         append_node_group(group_name)
 
+def make_custom_data(obj_name, attr_names, frame_start, frame_end, output_filepath, remap_output_filepath):
+    obj = bpy.data.objects.get(obj_name)
+    if obj is None:
+        print(f"Object '{obj_name}' not found")
+        return
+
+    frames = frame_end - frame_start + 1
+    channel_remap_data = {}
+
+    for attr in attr_names:
+        if not attr or attr.upper() == "NONE":
+            channel_remap_data["None"] = {
+                "Min": 0.0,
+                "Max": 0.0,
+                "Frames": frames
+            }
+            continue
+
+        frame_data = {}
+        for frame in range(frame_start, frame_end + 1):
+            bpy.context.scene.frame_set(frame)
+            values = get_geometry_nodes_data(obj, attr)
+            frame_data[frame] = values
+
+        attr_min, attr_max = find_scalar_max_min(frame_data)
+        channel_remap_data[attr] = {
+            "Min": attr_min,
+            "Max": attr_max,
+            "Frames": frames
+        }
+
+    # Write or return the remap info
+    with open(remap_output_filepath, 'w') as f:
+        json.dump(channel_remap_data, f, indent=4)
+
 def make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath, scalar_value):
     obj = bpy.data.objects.get(obj_name)
     if obj is None:
@@ -132,7 +167,7 @@ def find_scalar_max_min(all_frames_data):
     if min_value is not None:
         min_value = round_to_nearest_ten(min_value, math.floor)
 
-    return max_value, min_value
+    return min_value, max_value
             
 # Function to find x, y, z min/max from JSON
 def find_max_min_values(all_frames_data):
@@ -170,6 +205,31 @@ def read_remap_info(filepath, attribute):
 
     return min_x, min_y, min_z, max_x, max_y, max_z
 
+def read_custom_info(filepath, attr_names):
+    """
+    Returns a flat list of min/max per attribute: [min_r, min_g, min_b, max_r, max_g, max_b]
+    """
+    with open(filepath, 'r') as f:
+        data = json.load(f)
+
+    min_vals = []
+    max_vals = []
+
+    for attr in attr_names:
+        if not attr or attr.upper() == "NONE":
+            min_vals.append(0.0)
+            max_vals.append(0.0)
+            continue
+        
+        if attr not in data:
+            raise ValueError(f"Attribute '{attr}' not found in remap file.")
+
+        min_vals.append(data[attr]["Min"])
+        max_vals.append(data[attr]["Max"])
+
+
+    return (*min_vals, *max_vals)
+
 def clean_mesh_data(obj):
 
     if obj and obj.type == 'MESH':
@@ -200,72 +260,71 @@ def get_virtual_ripped_vertex_count(obj):
     return count
 
 # Best working approximations for output size based on realized data available
+
 def calculate_optimal_vat_resolution(num_vertices, num_frames):
-    total_pixels = num_vertices * num_frames
-    approx_side = math.sqrt(total_pixels)
+    def next_power_of_2(x):
+        return 1 if x <= 1 else 2**math.ceil(math.log2(x))
 
-    def closest_power_of_2(n):
-        return 2 ** math.floor(math.log2(n))
+    def powers_of_two(min_val=64, max_val=8192):
+        val = min_val
+        while val <= max_val:
+            yield val
+            val *= 2
 
-    width = closest_power_of_2(approx_side)
-    height = closest_power_of_2(approx_side)
+    best = None
+    best_area = float('inf')
 
-    while width * height < total_pixels:
-        if width < height:
-            width *= 2
-        else:
-            height *= 2
+    for width in powers_of_two():
+        num_wraps = math.ceil(num_vertices / width)
+        height_unrounded = num_frames * num_wraps
+        height = next_power_of_2(height_unrounded)
 
-    num_wraps = math.ceil(num_vertices / width)
+        log2_width = math.log2(width)
+        log2_height = math.log2(height)
 
-    # Ensure height is tall enough to fit all frame rows
-    while height < num_frames * num_wraps:
-        height *= 2
+        if abs(log2_width - log2_height) > 1:
+            continue  # Skip if too far from square
 
-    return (int(width), int(height), num_wraps)
-    #return (int(num_vertices), int(num_frames), 1)
+        area = width * height
+        if area < best_area:
+            best = (width, height, num_wraps)
+            best_area = area
+
+    return best
+
 
 def calculate_packed_vat_resolution(num_vertices, num_frames):
-    total_pixels = num_vertices * num_frames
-
-    def closest_power_of_2(n):
-        return 2 ** math.floor(math.log2(n))
-
-    def next_power_of_2(n):
+    def next_pow2(n):
         return 2 ** math.ceil(math.log2(n))
 
-    approx_side = math.sqrt(total_pixels)
-    width = closest_power_of_2(approx_side)
-    height = closest_power_of_2(approx_side)
+    def powers_of_two(min_val=64, max_val=8192):
+        v = min_val
+        while v <= max_val:
+            yield v
+            v *= 2
 
-    while width * height < total_pixels:
-        if width < height:
-            width *= 2
-        else:
-            height *= 2
+    best = None
+    best_area = float('inf')
 
-    num_wraps = math.ceil(num_vertices / width)
-    additional_rows_for_normals = num_wraps
+    for width in powers_of_two():
+        num_wraps = math.ceil(num_vertices / width)
 
-    height_with_normals = height + additional_rows_for_normals
-    height = next_power_of_2(height_with_normals)
-    
-    if height > width * 2:
-        height /= 2
-        width *= 2
-        
-    num_wraps = math.ceil(num_vertices / width)
-        
-    if ((num_wraps * 2) * num_frames) > height:
-        if width < height:
-            width *= 2
-        else:
-            height *= 2
-        
-    width = int(width)
-    height = int(height)
+        pos_height = num_wraps * num_frames
+        norm_height = num_wraps * num_frames
+        total_height = next_pow2(pos_height + norm_height)
 
-    return (width, height, num_wraps)
+        log_w = math.log2(width)
+        log_h = math.log2(total_height)
+
+        if abs(log_w - log_h) > 1:
+            continue
+
+        area = width * total_height
+        if area < best_area:
+            best = (width, total_height, num_wraps)
+            best_area = area
+
+    return best
 
  
  
@@ -314,7 +373,7 @@ def rip_hard_edges(obj):
     bm.to_mesh(mesh)
     bm.free()
     mesh.update()  
-
+    
 def get_point_attributes_filtered(self, context, data_type_filter=None):
     items = []
     obj = context.active_object
@@ -336,3 +395,26 @@ def get_point_attributes_filtered(self, context, data_type_filter=None):
         items.append(('None', 'None', 'No attributes found'))
         
     return items
+
+def get_evaluated_point_float_attributes(context):
+    depsgraph = context.evaluated_depsgraph_get()
+    obj = context.active_object
+    if not obj or obj.type != 'MESH':
+        return []
+
+    eval_obj = obj.evaluated_get(depsgraph)
+    eval_mesh = eval_obj.to_mesh()
+    try:
+        return [
+            (attr.name, attr.name, "")
+            for attr in eval_mesh.attributes
+            if attr.domain == 'POINT' and attr.data_type == 'FLOAT'
+        ]
+    finally:
+        eval_obj.to_mesh_clear()
+
+_openvat_enum_cache = {
+    "1": [("NONE", "None", "")],
+    "2": [("NONE", "None", "")],
+    "3": [("NONE", "None", "")]
+}
