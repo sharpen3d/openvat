@@ -102,6 +102,13 @@ Immediately after VAT creation, a new object will be added to the scene as a cop
 ** Using tangent-space normal maps on VAT-animated meshes can be tricky. In most cases, it is recommended to use an object-space baked normal map for surface detail, and comine this with the animated VAT normal for proper surface lighting during deformation. This requires alteration to the default provided shaders.
 
 ### Engine Support
+
+🔒 Licensing Note: Engine Integration Examples
+
+The core OpenVAT tool is licensed under GPL-3.0. However, the contents of the `OpenVAT-Engine_Tools` sub-folder
+(including Unity, Unreal, Godot, and EffectHouse integrations) are provided under a separate permissive MIT license. 
+These examples are provided are intended to provide clarity and education- to help users implement OpenVAT output in proprietary engines, but should not fall under GPL - so they can safely be used directly in production if necessary.
+
 ## Unity
 
 - **Adding the Unity Package**
