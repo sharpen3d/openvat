@@ -1,8 +1,10 @@
 # OpenVAT – Vertex Animation Toolkit for Blender
 
 **Author:** Luke Stilson  
-**Version:** 1.0.3a  
-**Blender Compatibility:** 4.2.0+  
+**Version:** 1.0.4
+**Blender Compatibility:** 4.2.0+  (4.4 recommended)
+
+Documentation needs update to 1.0.4 - visit openvat.org for more information on the new encoding options for 1.0.4 and detailed technical overview. 
 
 ## Overview
 
