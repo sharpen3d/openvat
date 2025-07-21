@@ -272,7 +272,7 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
         if bpy.data.scenes[original_scene_name].vat_settings.encode_type == 'DEFAULT':
             if bpy.data.scenes[original_scene_name].vat_settings.vat_normal_encoding != 'NONE':
                 print ("Starting normals render process...")
-                bpy.context.obaaject.modifiers[-1]["Socket_17"] = True
+                bpy.context.object.modifiers[-1]["Socket_17"] = True
                 rendername = vat_scene.name.replace("_ovbake_vat", "_vnrm")
                 vat_scene.render.use_compositing = False
             
