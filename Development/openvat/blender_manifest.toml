@@ -1,7 +1,7 @@
 schema_version = "1.0.0"
 
 id = "openvat"
-version = "1.0.4"
+version = "1.0.41"
 name = "OpenVAT"
 tagline = "Encode and preview vertex animation textures"
 maintainer = "Luke Stilson <stilson.luke@gmail.com>"
