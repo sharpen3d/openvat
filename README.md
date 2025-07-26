@@ -6,7 +6,9 @@
 
 Documentation needs update to 1.0.4 - visit openvat.org for more information on the new encoding options for 1.0.4 and detailed technical overview. 
 
-## Overview
+For Experimental examples of fluid simulation encoding, check out this video walking through 2 methods available in the experimental fluid simulation encoding template
+## OverviewFluid Simulation via Vertex Animation Textures (OpenVAT)
+https://youtu.be/xoLxKinzBwI
 
 **OpenVAT** is a Blender add-on that encodes Vertex Animation Textures (VATs) directly from animated geometry. Designed for real-time engine export (Unity, Unreal, Godot), it supports:
 - Frame-based geometry capture via Geometry Nodes.
