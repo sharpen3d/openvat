@@ -1,11 +1,31 @@
 # OpenVAT – Vertex Animation Toolkit for Blender
 
 **Author:** Luke Stilson  
-**Version:** 1.0.4
-**Blender Compatibility:** 4.2.0+  (4.4 recommended)
+**Version:** 1.1.0
+**Blender Compatibility:** 4.2.0+  5.0 now supported and backwards compatible, please report any issues with 5.0 or issues with previous versions that may arise from this update. 
+**Versions:** Check Development/Builds folder for previous stable builds
 
-Documentation needs update to 1.0.4 - visit openvat.org for more information on the new encoding options for 1.0.4 and detailed technical overview. 
+## New in 1.1.0
+### Animation Data Panel
+A new **Animation Data** panel has been added.
 
+- Allows you to define **animation metadata** that is written into the exported JSON:
+  - Per-animation **name**
+  - **Frame ranges** (start/end frames)
+  - **Loop / non-loop** designation
+- This metadata is **used only by the Unity import pipeline** for now.
+- This system is designed to let you carve multiple logical clips (idle, run, attack, etc.) out of a single VAT bake.
+
+> ⚠️ Important behavior notes  
+> - **Does not affect encoding**: The animation definitions do **not** change which frames are baked. The full encoding range is still exported.  
+> - **No skipping**: Defining animations does **not** “skip” frames in the bake or change how the VAT is generated; it only tags ranges inside the encoded data.  
+> - **Global frame ranges**: Animation frame ranges are currently **global** scene frames, *not* relative to the VAT encoding start frame.
+> - Frame ranges are **global** scene frames, not offset-relative to the VAT bake’s start frame.
+> - Only the **Unity** importer currently reads and uses this metadata.
+- **Compositor**
+  - The new compositor API in Blender 5.0 is still evolving; future Blender releases may require minor adjustments, but the current helper-based approach is designed to minimize breakage.
+
+## Experimental / Advanced Features
 For Experimental examples of fluid simulation encoding, check out this video walking through 2 methods available in the experimental fluid simulation encoding template
 ## OverviewFluid Simulation via Vertex Animation Textures (OpenVAT)
 https://youtu.be/xoLxKinzBwI
