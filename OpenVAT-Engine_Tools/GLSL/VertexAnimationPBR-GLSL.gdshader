@@ -22,7 +22,6 @@ uniform sampler2D metallic_texture;
 uniform float specular;
 
 varying vec2 v_vat_uv_offset;
-varying vec3 v_vat_normal;
 
 void vertex() {
     // Get the current time and calculate the current frame
@@ -66,26 +65,22 @@ void vertex() {
     VERTEX += object_space_position;
 
     //// Sample the VAT normal texture and unpack the normals using UV2
-    vec3 VAT_normal = texture(vat_position_texture, VAT_UV_offset + .5f).rgb;
-	vec3 VAT_normal_next = texture(vat_position_texture, VAT_UV_offset_next + .5f).rgb;
+    vec3 VAT_normal = texture(vat_position_texture, VAT_UV_offset + .5f).rbg;
+	vec3 VAT_normal_next = texture(vat_position_texture, VAT_UV_offset_next + .5f).rbg;
     VAT_normal = 2.0 * VAT_normal - 1.0; // Unpack the normals from [0, 1] to [-1, 1]
 	VAT_normal_next = 2.0 * VAT_normal_next - 1.0; // Unpack the normals from [0, 1] to [-1, 1]
-    VAT_normal.r = -VAT_normal.r; // Flip the R channel
+    VAT_normal.b = -VAT_normal.b; // Flip the b channel
+    VAT_normal_next.b = -VAT_normal_next.b;
 
-    // Pass the unpacked normals to the fragment shader
-    v_vat_normal = normalize(mix(VAT_normal,VAT_normal_next, blend));
+    NORMAL = normalize(mix(VAT_normal,VAT_normal_next, blend));
 }
 
 void fragment() {
     vec2 base_uv = UV;
     vec4 albedo_tex = texture(base_color_texture,base_uv);
     ALBEDO = albedo.rgb * albedo_tex.rgb;
-    vec3 normal_map = texture(normal_map_texture, UV).rgb;
-        // Convert normal map from [0,1] range to [-1,1] range
-    vec3 local_normal = normalize(normal_map * 2.0 - 1.0);
+    NORMAL_MAP = texture(normal_map_texture, UV).rgb;
     
-    // Combine VAT normal with the normal map
-    vec3 combined_normal = normalize(v_vat_normal + local_normal);
     float metallic_tex = dot(texture(metallic_texture,base_uv),metallic_texture_channel);
     METALLIC = metallic_tex * metallic;
     vec4 roughness_texture_channel = vec4(1.0,0.0,0.0,0.0);
