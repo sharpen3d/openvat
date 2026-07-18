@@ -5,6 +5,134 @@ import bmesh
 import os
 from . import utils
 
+def get_scene_compositor_tree(scene: bpy.types.Scene, ensure: bool = True, name: str | None = None):
+    """
+    Version-safe accessor for the scene's compositor node tree.
+
+    - Blender <= 4.x: uses scene.use_nodes + scene.node_tree
+    - Blender 5.x+:   uses scene.compositing_node_group
+
+    ensure=True will create a CompositorNodeTree and wire it up if missing.
+    """
+    if scene is None:
+        raise ValueError("Scene is None")
+
+    # Blender 5.0+ path: scene.node_tree removed, use compositing_node_group instead
+    # (per 5.0 Python API release notes). :contentReference[oaicite:0]{index=0}
+    if hasattr(scene, "compositing_node_group"):
+        tree = scene.compositing_node_group
+
+        if tree is None and ensure:
+            base_name = name or f"{scene.name}_Compositor"
+            tree = bpy.data.node_groups.new(base_name, "CompositorNodeTree")
+            scene.compositing_node_group = tree  # also auto-sets use_nodes in 5.x. :contentReference[oaicite:1]{index=1}
+
+        return tree
+
+    # Legacy 4.x path
+    if ensure and not getattr(scene, "use_nodes", False):
+        scene.use_nodes = True
+
+    return scene.node_tree
+
+def get_compositor_output_socket(tree: bpy.types.NodeTree,
+                                 ensure_interface: bool = True):
+    """Return (output_node, input_socket) for compositor output, 4.x + 5.x."""
+
+    # 5.x path: the "output" is a NodeGroupOutput node + interface socket
+    if tree.bl_idname == "CompositorNodeTree" and hasattr(bpy.context.scene, "compositing_node_group"):
+        out_node = None
+        for n in tree.nodes:
+            if n.bl_idname == "NodeGroupOutput":
+                out_node = n
+                break
+        if out_node is None:
+            out_node = tree.nodes.new("NodeGroupOutput")
+            out_node.is_active_output = True
+
+        if ensure_interface:
+            tree.interface.new_socket(
+                name="Image",
+                in_out='OUTPUT',
+                socket_type='NodeSocketColor'
+            )
+
+        return out_node, out_node.inputs[0]
+
+    # 4.x path: regular Composite node
+    comp = None
+    for n in tree.nodes:
+        if n.bl_idname == "CompositorNodeComposite":
+            comp = n
+            break
+    if comp is None:
+        comp = tree.nodes.new("CompositorNodeComposite")
+    return comp, comp.inputs[0]
+
+def setup_alpha_over_node(alpha_over_node,
+                          image_node,
+                          render_layers_node,
+                          output_socket,
+                          links):
+    """
+    Version-safe Alpha Over setup + wiring:
+
+    - Blender 5.x:
+        - 'Straight Alpha' input = True
+        - 'Background' / 'Foreground' inputs by name
+    - Blender 4.x:
+        - use_premultiply = False
+        - inputs[1] (BG), inputs[2] (FG)
+    """
+
+    # --- Alpha handling: 5.x "Straight Alpha" vs 4.x "use_premultiply" ---
+    straight_input = None
+    for inp in alpha_over_node.inputs:
+        if getattr(inp, "identifier", "") == "straight_alpha" or inp.name == "Straight Alpha":
+            straight_input = inp
+            break
+
+    if straight_input is not None:
+        # Blender 5.x style
+        straight_input.default_value = True
+    elif hasattr(alpha_over_node, "use_premultiply"):
+        # Blender 4.x style
+        alpha_over_node.use_premultiply = False
+
+    # Factor
+    fac_input = alpha_over_node.inputs.get("Fac", None)
+    if fac_input is None and len(alpha_over_node.inputs) > 0:
+        fac_input = alpha_over_node.inputs[0]
+    if fac_input is not None:
+        fac_input.default_value = 1.0
+
+    # --- BG / FG sockets: names in 5.x, indices in 4.x ---
+    bg_socket = alpha_over_node.inputs.get("Background", None)
+    fg_socket = alpha_over_node.inputs.get("Foreground", None)
+
+    if bg_socket is None or fg_socket is None:
+        # Legacy 4.x layout: [0]=Fac, [1]=BG, [2]=FG
+        if len(alpha_over_node.inputs) >= 3:
+            bg_socket = alpha_over_node.inputs[1]
+            fg_socket = alpha_over_node.inputs[2]
+        else:
+            raise RuntimeError("Alpha Over node does not have expected BG/FG inputs")
+
+    # Outputs: use "Image" by name, else index 0
+    img_out = image_node.outputs.get("Image", None) or image_node.outputs[0]
+    rl_out  = render_layers_node.outputs.get("Image", None) or render_layers_node.outputs[0]
+    alpha_out = alpha_over_node.outputs.get("Image", None) or alpha_over_node.outputs[0]
+
+    # Wire BG/FG
+    links.new(img_out, bg_socket)   # BG
+    links.new(rl_out,  fg_socket)   # FG
+
+    # Wire Alpha Over into final output
+    links.new(alpha_out, output_socket)
+
+    return alpha_over_node
+
+
 # Create VAT UV map with bmesh
 def create_uv_map(obj, screen_width, screen_height, frames):
     bpy.ops.object.mode_set(mode='EDIT')
@@ -52,28 +180,28 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
     # Now safely reference it by name
     mod.node_group = bpy.data.node_groups[nodegroup_method]
 
-    mod["Socket_4"] = bpy.data.objects[obj_name]
-    mod["Socket_2"] = num_frames
-    mod["Socket_10"] = num_wraps
-    mod["Socket_8"] = width
-    mod["Socket_9"] = height
-    mod["Socket_11"] = bpy.data.objects[proxy_name]
-    mod["Socket_6"] = original_scene['min_x']
-    mod["Socket_7"] = original_scene['max_x']
-    mod["Socket_12"] = original_scene['min_y']
-    mod["Socket_13"] = original_scene['max_y']
-    mod["Socket_14"] = original_scene['min_z']
-    mod["Socket_15"] = original_scene['max_z']
-    mod["Socket_19"] = vat_scene.frame_start
+    utils.set_modifier_input(mod, "Socket_4", bpy.data.objects[obj_name])
+    utils.set_modifier_input(mod, "Socket_2", num_frames)
+    utils.set_modifier_input(mod, "Socket_10", num_wraps)
+    utils.set_modifier_input(mod, "Socket_8", width)
+    utils.set_modifier_input(mod, "Socket_9", height)
+    utils.set_modifier_input(mod, "Socket_11", bpy.data.objects[proxy_name])
+    utils.set_modifier_input(mod, "Socket_6", original_scene['min_x'])
+    utils.set_modifier_input(mod, "Socket_7", original_scene['max_x'])
+    utils.set_modifier_input(mod, "Socket_12", original_scene['min_y'])
+    utils.set_modifier_input(mod, "Socket_13", original_scene['max_y'])
+    utils.set_modifier_input(mod, "Socket_14", original_scene['min_z'])
+    utils.set_modifier_input(mod, "Socket_15", original_scene['max_z'])
+    utils.set_modifier_input(mod, "Socket_19", vat_scene.frame_start)
 
 
     if use_custom:
-        mod["Socket_23"] = True
-        mod["Socket_20"] = original_scene.vat_settings.custom_attr_1
-        mod["Socket_26"] = original_scene.vat_settings.custom_attr_2
-        mod["Socket_27"] = original_scene.vat_settings.custom_attr_3
+        utils.set_modifier_input(mod, "Socket_23", True)
+        utils.set_modifier_input(mod, "Socket_20", original_scene.vat_settings.custom_attr_1)
+        utils.set_modifier_input(mod, "Socket_26", original_scene.vat_settings.custom_attr_2)
+        utils.set_modifier_input(mod, "Socket_27", original_scene.vat_settings.custom_attr_3)
         if custom_remap:
-            mod["Socket_22"] = True
+            utils.set_modifier_input(mod, "Socket_22", True)
     else:
         if bpy.data.scenes[original_scene.name].vat_settings.vat_normal_encoding == 'PACKED':
             normal_tracker = tracker_plane.copy()
@@ -82,7 +210,7 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
             normal_tracker.location[1] = 0
             normal_mod = normal_tracker.modifiers.get("ov_tracking")
             if normal_mod:
-                normal_mod["Socket_17"] = True
+                utils.set_modifier_input(normal_mod, "Socket_17", True)
         
         
 def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_normals, framestart):
@@ -141,17 +269,17 @@ def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_
     mod = vat_obj.modifiers[-1]
     mod.node_group = bpy.data.node_groups["ov_vat-decoder-vs"]
     
-    mod["Socket_2_attribute_name"] = "VAT_UV"
-    mod["Socket_6"] = num_frames
-    mod["Socket_7"] = height
-    mod["Socket_9"] = image_result
-    mod["Socket_3"] = original_scene['min_x']
-    mod["Socket_4"] = original_scene['max_x']
-    mod["Socket_10"] = original_scene['min_y']
-    mod["Socket_11"] = original_scene['max_y']
-    mod["Socket_12"] = original_scene['min_z']
-    mod["Socket_13"] = original_scene['max_z']
-    mod["Socket_14"] = original_scene.frame_start
+    utils.set_modifier_input(mod, "Socket_2", "VAT_UV", is_attribute_name=True)
+    utils.set_modifier_input(mod, "Socket_6", num_frames)
+    utils.set_modifier_input(mod, "Socket_7", height)
+    utils.set_modifier_input(mod, "Socket_9", image_result)
+    utils.set_modifier_input(mod, "Socket_3", original_scene['min_x'])
+    utils.set_modifier_input(mod, "Socket_4", original_scene['max_x'])
+    utils.set_modifier_input(mod, "Socket_10", original_scene['min_y'])
+    utils.set_modifier_input(mod, "Socket_11", original_scene['max_y'])
+    utils.set_modifier_input(mod, "Socket_12", original_scene['min_z'])
+    utils.set_modifier_input(mod, "Socket_13", original_scene['max_z'])
+    utils.set_modifier_input(mod, "Socket_14", original_scene.frame_start)
 
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
@@ -272,14 +400,17 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
         if bpy.data.scenes[original_scene_name].vat_settings.encode_type == 'DEFAULT':
             if bpy.data.scenes[original_scene_name].vat_settings.vat_normal_encoding != 'NONE':
                 print ("Starting normals render process...")
-                bpy.context.object.modifiers[-1]["Socket_17"] = True
+                utils.set_modifier_input(bpy.context.object.modifiers[-1], "Socket_17", True)
                 rendername = vat_scene.name.replace("_ovbake_vat", "_vnrm")
                 vat_scene.render.use_compositing = False
             
                 # Prep
                 render_vat_nrml(vat_scene, 0, output_dir, image_format, fmt)
                 vat_scene.render.use_compositing = True
-                tree = vat_scene.node_tree
+
+                tree = get_scene_compositor_tree(vat_scene, ensure=True, name=f"{vat_scene.name}_vnrm")
+
+                
                 image_node = tree.nodes["Image"]
                 image = bpy.data.images.get(rendername + image_format)
                 image_node.image = image
@@ -290,19 +421,24 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
     
 # Set up compositing for the per frame capture overlay in the vat scene
 def setup_compositing(vat_scene, output_dir, scene_name, proxy_obj, image_format, raw_format):
-    vat_scene.use_nodes = True
-    tree = vat_scene.node_tree
+    tree = get_scene_compositor_tree(vat_scene, ensure=True, name=f"{vat_scene.name}_Compositor")
+    if tree is None:
+        print("❌ No compositor tree available on scene; skipping compositing setup.")
+        return
+
     links = tree.links
 
     # Clear all existing nodes
-    for node in tree.nodes:
+    for node in list(tree.nodes):
         tree.nodes.remove(node)
 
     # Create nodes
-    render_layers_node = tree.nodes.new(type="CompositorNodeRLayers")
-    image_node = tree.nodes.new(type="CompositorNodeImage")
-    alpha_over_node = tree.nodes.new(type="CompositorNodeAlphaOver")
-    composite_node = tree.nodes.new(type="CompositorNodeComposite")
+    render_layers_node = tree.nodes.new("CompositorNodeRLayers")
+    image_node         = tree.nodes.new("CompositorNodeImage")
+    alpha_over_node    = tree.nodes.new("CompositorNodeAlphaOver")
+
+    # Get the correct "final output" socket for this Blender version
+    output_node, output_socket = get_compositor_output_socket(tree, ensure_interface=True)
 
     # Load previously composited image
     image_name = vat_scene.name.replace("_ovbake", "") + image_format
@@ -313,22 +449,14 @@ def setup_compositing(vat_scene, output_dir, scene_name, proxy_obj, image_format
 
     image_node.image = image
     image.colorspace_settings.name = 'Non-Color'
+    
+    #setup and link this node to composite output - backwards compatible 4.x-5.0
+    setup_alpha_over_node(alpha_over_node, image_node, render_layers_node, output_socket, links)
 
-    # Setup Alpha Over node
-    alpha_over_node.use_premultiply = False
-    alpha_over_node.premul = 1.0
-    alpha_over_node.inputs['Fac'].default_value = 1.0  # Always use alpha from the foreground
 
-    # Connect nodes
-    links.new(image_node.outputs[0], alpha_over_node.inputs[1])              # Background (previous image)
-    links.new(render_layers_node.outputs[0], alpha_over_node.inputs[2])     # Foreground (current render)
-    links.new(alpha_over_node.outputs[0], composite_node.inputs[0])         # Final output
 
 def setup_unnormalize(vat_scene, original_scene, attribute_name):
-    if not vat_scene.use_nodes:
-        vat_scene.use_nodes = True
-
-    tree = vat_scene.node_tree
+    tree = get_scene_compositor_tree(vat_scene, ensure=True, name=f"{vat_scene.name}_unnorm")
     if tree is None:
         print("❌ No compositor node tree available.")
         return
@@ -336,7 +464,7 @@ def setup_unnormalize(vat_scene, original_scene, attribute_name):
     links = tree.links
 
     # Clear existing nodes
-    for node in tree.nodes:
+    for node in list(tree.nodes):
         tree.nodes.remove(node)
 
     # Load per-channel remap min/max from original_scene custom properties
@@ -357,13 +485,11 @@ def setup_unnormalize(vat_scene, original_scene, attribute_name):
     image.use_half_precision = False
 
     # Create nodes
-    image_node = tree.nodes.new("CompositorNodeImage")
+    image_node    = tree.nodes.new("CompositorNodeImage")
     separate_node = tree.nodes.new("CompositorNodeSepRGBA")
-    combine_node = tree.nodes.new("CompositorNodeCombRGBA")
-    composite_node = tree.nodes.new("CompositorNodeComposite")
+    combine_node  = tree.nodes.new("CompositorNodeCombRGBA")
 
     image_node.image = image
-
     links.new(image_node.outputs[0], separate_node.inputs[0])
 
     for i, (min_val, max_val) in enumerate([(min_x, max_x), (min_y, max_y), (min_z, max_z)]):
@@ -381,10 +507,12 @@ def setup_unnormalize(vat_scene, original_scene, attribute_name):
     # Pass alpha through directly
     links.new(separate_node.outputs[3], combine_node.inputs[3])
 
-    # Output to Composite
-    links.new(combine_node.outputs[0], composite_node.inputs[0])
+    # 5.0-safe: use Group Output (or Composite in 4.x) via helper
+    output_node, output_socket = get_compositor_output_socket(tree, ensure_interface=True)
+    links.new(combine_node.outputs[0], output_socket)
 
     print("✅ Unnormalize-only compositing setup complete using Map Range nodes.")
+
 
 # Called to render temporary frames to first prime the compositor, then through sequence for vat and optionally vnrm    
 def render_vat_scene(vat_scene, num_frames, output_dir, image_format, raw_format):
