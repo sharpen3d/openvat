@@ -1,4 +1,4 @@
-﻿# OpenVAT core functions
+# OpenVAT core functions
 
 import bpy
 import bmesh
@@ -180,28 +180,46 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
     # Now safely reference it by name
     mod.node_group = bpy.data.node_groups[nodegroup_method]
 
-    utils.set_modifier_input(mod, "Socket_4", bpy.data.objects[obj_name])
-    utils.set_modifier_input(mod, "Socket_2", num_frames)
-    utils.set_modifier_input(mod, "Socket_10", num_wraps)
-    utils.set_modifier_input(mod, "Socket_8", width)
-    utils.set_modifier_input(mod, "Socket_9", height)
-    utils.set_modifier_input(mod, "Socket_11", bpy.data.objects[proxy_name])
-    utils.set_modifier_input(mod, "Socket_6", original_scene['min_x'])
-    utils.set_modifier_input(mod, "Socket_7", original_scene['max_x'])
-    utils.set_modifier_input(mod, "Socket_12", original_scene['min_y'])
-    utils.set_modifier_input(mod, "Socket_13", original_scene['max_y'])
-    utils.set_modifier_input(mod, "Socket_14", original_scene['min_z'])
-    utils.set_modifier_input(mod, "Socket_15", original_scene['max_z'])
-    utils.set_modifier_input(mod, "Socket_19", vat_scene.frame_start)
+    utils.set_modifier_input(mod, "Socket_4", bpy.data.objects[obj_name]
+)
+    utils.set_modifier_input(mod, "Socket_2", num_frames
+)
+    utils.set_modifier_input(mod, "Socket_10", num_wraps
+)
+    utils.set_modifier_input(mod, "Socket_8", width
+)
+    utils.set_modifier_input(mod, "Socket_9", height
+)
+    utils.set_modifier_input(mod, "Socket_11", bpy.data.objects[proxy_name]
+)
+    utils.set_modifier_input(mod, "Socket_6", original_scene['min_x']
+)
+    utils.set_modifier_input(mod, "Socket_7", original_scene['max_x']
+)
+    utils.set_modifier_input(mod, "Socket_12", original_scene['min_y']
+)
+    utils.set_modifier_input(mod, "Socket_13", original_scene['max_y']
+)
+    utils.set_modifier_input(mod, "Socket_14", original_scene['min_z']
+)
+    utils.set_modifier_input(mod, "Socket_15", original_scene['max_z']
+)
+    utils.set_modifier_input(mod, "Socket_19", vat_scene.frame_start
+)
 
 
     if use_custom:
-        utils.set_modifier_input(mod, "Socket_23", True)
-        utils.set_modifier_input(mod, "Socket_20", original_scene.vat_settings.custom_attr_1)
-        utils.set_modifier_input(mod, "Socket_26", original_scene.vat_settings.custom_attr_2)
-        utils.set_modifier_input(mod, "Socket_27", original_scene.vat_settings.custom_attr_3)
+        utils.set_modifier_input(mod, "Socket_23", True
+)
+        utils.set_modifier_input(mod, "Socket_20", original_scene.vat_settings.custom_attr_1
+)
+        utils.set_modifier_input(mod, "Socket_26", original_scene.vat_settings.custom_attr_2
+)
+        utils.set_modifier_input(mod, "Socket_27", original_scene.vat_settings.custom_attr_3
+)
         if custom_remap:
-            utils.set_modifier_input(mod, "Socket_22", True)
+            utils.set_modifier_input(mod, "Socket_22", True
+)
     else:
         if bpy.data.scenes[original_scene.name].vat_settings.vat_normal_encoding == 'PACKED':
             normal_tracker = tracker_plane.copy()
@@ -210,7 +228,8 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
             normal_tracker.location[1] = 0
             normal_mod = normal_tracker.modifiers.get("ov_tracking")
             if normal_mod:
-                utils.set_modifier_input(normal_mod, "Socket_17", True)
+                utils.set_modifier_input(normal_mod, "Socket_17", True
+)
         
         
 def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_normals, framestart):
@@ -269,17 +288,28 @@ def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_
     mod = vat_obj.modifiers[-1]
     mod.node_group = bpy.data.node_groups["ov_vat-decoder-vs"]
     
-    utils.set_modifier_input(mod, "Socket_2", "VAT_UV", is_attribute_name=True)
-    utils.set_modifier_input(mod, "Socket_6", num_frames)
-    utils.set_modifier_input(mod, "Socket_7", height)
-    utils.set_modifier_input(mod, "Socket_9", image_result)
-    utils.set_modifier_input(mod, "Socket_3", original_scene['min_x'])
-    utils.set_modifier_input(mod, "Socket_4", original_scene['max_x'])
-    utils.set_modifier_input(mod, "Socket_10", original_scene['min_y'])
-    utils.set_modifier_input(mod, "Socket_11", original_scene['max_y'])
-    utils.set_modifier_input(mod, "Socket_12", original_scene['min_z'])
-    utils.set_modifier_input(mod, "Socket_13", original_scene['max_z'])
-    utils.set_modifier_input(mod, "Socket_14", original_scene.frame_start)
+    utils.set_modifier_input(mod, "Socket_2", "VAT_UV"
+, is_attribute_name=True)
+    utils.set_modifier_input(mod, "Socket_6", num_frames
+)
+    utils.set_modifier_input(mod, "Socket_7", height
+)
+    utils.set_modifier_input(mod, "Socket_9", image_result
+)
+    utils.set_modifier_input(mod, "Socket_3", original_scene['min_x']
+)
+    utils.set_modifier_input(mod, "Socket_4", original_scene['max_x']
+)
+    utils.set_modifier_input(mod, "Socket_10", original_scene['min_y']
+)
+    utils.set_modifier_input(mod, "Socket_11", original_scene['max_y']
+)
+    utils.set_modifier_input(mod, "Socket_12", original_scene['min_z']
+)
+    utils.set_modifier_input(mod, "Socket_13", original_scene['max_z']
+)
+    utils.set_modifier_input(mod, "Socket_14", original_scene.frame_start
+)
 
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
@@ -400,7 +430,8 @@ def setup_vat_scene(proxy_obj, obj_name, original_scene_name, num_frames, width,
         if bpy.data.scenes[original_scene_name].vat_settings.encode_type == 'DEFAULT':
             if bpy.data.scenes[original_scene_name].vat_settings.vat_normal_encoding != 'NONE':
                 print ("Starting normals render process...")
-                utils.set_modifier_input(bpy.context.object.modifiers[-1], "Socket_17", True)
+                utils.set_modifier_input(bpy.context.object.modifiers[-1], "Socket_17", True
+)
                 rendername = vat_scene.name.replace("_ovbake_vat", "_vnrm")
                 vat_scene.render.use_compositing = False
             
