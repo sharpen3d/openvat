@@ -17,7 +17,31 @@ def ensure_node_group(group_name):
     if group_name not in bpy.data.node_groups:
         append_node_group(group_name)
 
-def make_custom_data(obj_name, attr_names, frame_start, frame_end, output_filepath, remap_output_filepath):
+def set_modifier_input(modifier, socket_id, value, is_attribute_name=False):
+    """
+    Version-safe setter for a Geometry Nodes modifier's input socket value.
+
+    - Blender <= 4.x: uses modifier[socket_id] (flat ID-property access), or
+                      modifier[f"{socket_id}_attribute_name"] for the attribute-name variant.
+    - Blender 5.x+:   uses modifier.properties.inputs.<socket_id>.value, or
+                      .attribute_name for the attribute-name variant - the modifier input
+                      storage was restructured into a nested, typed properties.inputs group
+                      (see Blender commit 1561c1ea4ab6). Detected via hasattr rather than a
+                      hardcoded bpy.app.version check, matching this addon's own existing
+                      get_scene_compositor_tree() convention - robust to the exact version this
+                      landed in without needing to pin it down.
+    """
+    if hasattr(modifier, "properties") and hasattr(modifier.properties, "inputs"):
+        socket = getattr(modifier.properties.inputs, socket_id)
+        if is_attribute_name:
+            socket.attribute_name = value
+        else:
+            socket.value = value
+    else:
+        key = f"{socket_id}_attribute_name" if is_attribute_name else socket_id
+        modifier[key] = value
+
+def make_custom_data(obj_name, attr_names, frame_start, frame_end, output_filepath, remap_output_filepath, framerate=30, looping=True):
     obj = bpy.data.objects.get(obj_name)
     if obj is None:
         print(f"Object '{obj_name}' not found")
@@ -52,7 +76,38 @@ def make_custom_data(obj_name, attr_names, frame_start, frame_end, output_filepa
     with open(remap_output_filepath, 'w') as f:
         json.dump(channel_remap_data, f, indent=4)
 
-def make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath, scalar_value):
+    # --- NEW: Add animation data section to main output ---
+    try:
+        # Load existing data (if any)
+        if os.path.exists(output_filepath):
+            with open(output_filepath, 'r') as f:
+                output_data = json.load(f)
+        else:
+            output_data = {}
+
+        # Add/overwrite animations section
+        anim_entry = {
+            "startFrame": frame_start,
+            "endFrame": frame_end,
+            "framerate": framerate,
+            "looping": looping
+        }
+        # If already has an animations list, append; else, create new
+        if "animations" not in output_data:
+            output_data["animations"] = []
+        output_data["animations"].append(anim_entry)
+
+        # Write back to file
+        with open(output_filepath, 'w') as f:
+            json.dump(output_data, f, indent=4)
+
+    except Exception as e:
+        print(f"Error updating animation data: {e}")
+
+def make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath,animations, scalar_value=""):
+    import os
+    import json
+
     obj = bpy.data.objects.get(obj_name)
     if obj is None:
         print(f"Object '{obj_name}' not found")
@@ -97,12 +152,42 @@ def make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_fil
             attribute_name: {
                 "Min": overall_min,
                 "Max": overall_max,
-                "Frames": frames
+                "Frames": frames,
             }
     }
     
+    # Write the remap info
     write_json(remap_info, remap_output_filepath)
     print(f"Remap information saved to {remap_output_filepath}")
+
+    # --- NEW: Add animation data section to main output ---
+    try:
+        # Load existing data (if any)
+        if os.path.exists(output_filepath):
+            with open(output_filepath, 'r') as f:
+                output_data = json.load(f)
+        else:
+            output_data = {}
+
+        # Add/overwrite animations section
+        anim_dict = {}
+        for anim in animations:
+            anim_dict[anim.name] = {
+                "startFrame": anim.start_frame,
+                "endFrame": anim.end_frame,
+                "framerate": anim.framerate,
+                "looping": anim.looping
+            }
+
+        output_data["animations"] = anim_dict
+
+        # Write back to file
+        with open(output_filepath, 'w') as f:
+            json.dump(output_data, f, indent=4)
+
+    except Exception as e:
+        print(f"Error updating animation data: {e}")
+
 
 # Get data from dependency graph
 def get_geometry_nodes_data(obj, attribute_name):

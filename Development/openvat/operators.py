@@ -157,13 +157,16 @@ class OBJECT_OT_CalculateVATResolution(bpy.types.Operator):
         positionNodes = bpy.ops.object.modifier_add(type='NODES')
         obj.modifiers[-1].name  = "positionCalculation"
         obj.modifiers[-1].node_group = bpy.data.node_groups["ov_generated-pos"]
-        obj.modifiers[-1]["Socket_3"] = temp_obj
+        utils.set_modifier_input(obj.modifiers[-1], "Socket_3", temp_obj)
 
         # Execute the saturation remapping
         if settings.encode_type == 'DEFAULT':
             attribute_name = "colPos"
-            utils.make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath, "")
+            scene = bpy.context.scene
+            anim_list = scene.vat_anim_data
+            utils.make_remap_data(obj_name, attribute_name, frame_start, frame_end, output_filepath, remap_output_filepath,anim_list, "")
 
+    
             min_x, min_y, min_z, max_x, max_y, max_z = utils.read_remap_info(remap_output_filepath, attribute_name)
             context.scene['min_x'] = min_x
             context.scene['min_y'] = min_y
