@@ -6,19 +6,14 @@ import os
 from . import utils
 
 def get_scene_compositor_tree(scene: bpy.types.Scene, ensure: bool = True, name: str | None = None):
-    """
-    Version-safe accessor for the scene's compositor node tree.
+    
 
-    - Blender <= 4.x: uses scene.use_nodes + scene.node_tree
-    - Blender 5.x+:   uses scene.compositing_node_group
+    #ensure=True will create a CompositorNodeTree and wire it up if missing.
 
-    ensure=True will create a CompositorNodeTree and wire it up if missing.
-    """
     if scene is None:
         raise ValueError("Scene is None")
 
     # Blender 5.0+ path: scene.node_tree removed, use compositing_node_group instead
-    # (per 5.0 Python API release notes). :contentReference[oaicite:0]{index=0}
     if hasattr(scene, "compositing_node_group"):
         tree = scene.compositing_node_group
 
@@ -37,7 +32,6 @@ def get_scene_compositor_tree(scene: bpy.types.Scene, ensure: bool = True, name:
 
 def get_compositor_output_socket(tree: bpy.types.NodeTree,
                                  ensure_interface: bool = True):
-    """Return (output_node, input_socket) for compositor output, 4.x + 5.x."""
 
     # 5.x path: the "output" is a NodeGroupOutput node + interface socket
     if tree.bl_idname == "CompositorNodeTree" and hasattr(bpy.context.scene, "compositing_node_group"):
@@ -74,16 +68,6 @@ def setup_alpha_over_node(alpha_over_node,
                           render_layers_node,
                           output_socket,
                           links):
-    """
-    Version-safe Alpha Over setup + wiring:
-
-    - Blender 5.x:
-        - 'Straight Alpha' input = True
-        - 'Background' / 'Foreground' inputs by name
-    - Blender 4.x:
-        - use_premultiply = False
-        - inputs[1] (BG), inputs[2] (FG)
-    """
 
     # --- Alpha handling: 5.x "Straight Alpha" vs 4.x "use_premultiply" ---
     straight_input = None
@@ -91,12 +75,13 @@ def setup_alpha_over_node(alpha_over_node,
         if getattr(inp, "identifier", "") == "straight_alpha" or inp.name == "Straight Alpha":
             straight_input = inp
             break
-
+    
+    # Blender 5.x path
     if straight_input is not None:
-        # Blender 5.x style
         straight_input.default_value = True
+    
+    # Blender 4.x path
     elif hasattr(alpha_over_node, "use_premultiply"):
-        # Blender 4.x style
         alpha_over_node.use_premultiply = False
 
     # Factor
@@ -111,7 +96,7 @@ def setup_alpha_over_node(alpha_over_node,
     fg_socket = alpha_over_node.inputs.get("Foreground", None)
 
     if bg_socket is None or fg_socket is None:
-        # Legacy 4.x layout: [0]=Fac, [1]=BG, [2]=FG
+        # 4.x Path
         if len(alpha_over_node.inputs) >= 3:
             bg_socket = alpha_over_node.inputs[1]
             fg_socket = alpha_over_node.inputs[2]
@@ -178,48 +163,31 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
     mod.name = "ov_tracking"  # Rename to a fixed, known string
 
     # Now safely reference it by name
+    # *Note to harden custom socket naming on template*
     mod.node_group = bpy.data.node_groups[nodegroup_method]
 
-    utils.set_modifier_input(mod, "Socket_4", bpy.data.objects[obj_name]
-)
-    utils.set_modifier_input(mod, "Socket_2", num_frames
-)
-    utils.set_modifier_input(mod, "Socket_10", num_wraps
-)
-    utils.set_modifier_input(mod, "Socket_8", width
-)
-    utils.set_modifier_input(mod, "Socket_9", height
-)
-    utils.set_modifier_input(mod, "Socket_11", bpy.data.objects[proxy_name]
-)
-    utils.set_modifier_input(mod, "Socket_6", original_scene['min_x']
-)
-    utils.set_modifier_input(mod, "Socket_7", original_scene['max_x']
-)
-    utils.set_modifier_input(mod, "Socket_12", original_scene['min_y']
-)
-    utils.set_modifier_input(mod, "Socket_13", original_scene['max_y']
-)
-    utils.set_modifier_input(mod, "Socket_14", original_scene['min_z']
-)
-    utils.set_modifier_input(mod, "Socket_15", original_scene['max_z']
-)
-    utils.set_modifier_input(mod, "Socket_19", vat_scene.frame_start
-)
+    utils.set_modifier_input(mod, "Socket_4", bpy.data.objects[obj_name])
+    utils.set_modifier_input(mod, "Socket_2", num_frames)
+    utils.set_modifier_input(mod, "Socket_10", num_wraps)
+    utils.set_modifier_input(mod, "Socket_8", width)
+    utils.set_modifier_input(mod, "Socket_9", height)
+    utils.set_modifier_input(mod, "Socket_11", bpy.data.objects[proxy_name])
+    utils.set_modifier_input(mod, "Socket_6", original_scene['min_x'])
+    utils.set_modifier_input(mod, "Socket_7", original_scene['max_x'])
+    utils.set_modifier_input(mod, "Socket_12", original_scene['min_y'])
+    utils.set_modifier_input(mod, "Socket_13", original_scene['max_y'])
+    utils.set_modifier_input(mod, "Socket_14", original_scene['min_z'])
+    utils.set_modifier_input(mod, "Socket_15", original_scene['max_z'])
+    utils.set_modifier_input(mod, "Socket_19", vat_scene.frame_start)
 
 
     if use_custom:
-        utils.set_modifier_input(mod, "Socket_23", True
-)
-        utils.set_modifier_input(mod, "Socket_20", original_scene.vat_settings.custom_attr_1
-)
-        utils.set_modifier_input(mod, "Socket_26", original_scene.vat_settings.custom_attr_2
-)
-        utils.set_modifier_input(mod, "Socket_27", original_scene.vat_settings.custom_attr_3
-)
+        utils.set_modifier_input(mod, "Socket_23", True)
+        utils.set_modifier_input(mod, "Socket_20", original_scene.vat_settings.custom_attr_1)
+        utils.set_modifier_input(mod, "Socket_26", original_scene.vat_settings.custom_attr_2)
+        utils.set_modifier_input(mod, "Socket_27", original_scene.vat_settings.custom_attr_3)
         if custom_remap:
-            utils.set_modifier_input(mod, "Socket_22", True
-)
+            utils.set_modifier_input(mod, "Socket_22", True)
     else:
         if bpy.data.scenes[original_scene.name].vat_settings.vat_normal_encoding == 'PACKED':
             normal_tracker = tracker_plane.copy()
@@ -228,8 +196,7 @@ def setup_vat_tracker(vat_scene, obj_name, num_frames, width, height, num_wraps,
             normal_tracker.location[1] = 0
             normal_mod = normal_tracker.modifiers.get("ov_tracking")
             if normal_mod:
-                utils.set_modifier_input(normal_mod, "Socket_17", True
-)
+                utils.set_modifier_input(normal_mod, "Socket_17", True)
         
         
 def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_normals, framestart):
@@ -288,28 +255,17 @@ def setup_proxy_scene(obj, num_frames, width, height, num_wraps, temp_obj, pack_
     mod = vat_obj.modifiers[-1]
     mod.node_group = bpy.data.node_groups["ov_vat-decoder-vs"]
     
-    utils.set_modifier_input(mod, "Socket_2", "VAT_UV"
-, is_attribute_name=True)
-    utils.set_modifier_input(mod, "Socket_6", num_frames
-)
-    utils.set_modifier_input(mod, "Socket_7", height
-)
-    utils.set_modifier_input(mod, "Socket_9", image_result
-)
-    utils.set_modifier_input(mod, "Socket_3", original_scene['min_x']
-)
-    utils.set_modifier_input(mod, "Socket_4", original_scene['max_x']
-)
-    utils.set_modifier_input(mod, "Socket_10", original_scene['min_y']
-)
-    utils.set_modifier_input(mod, "Socket_11", original_scene['max_y']
-)
-    utils.set_modifier_input(mod, "Socket_12", original_scene['min_z']
-)
-    utils.set_modifier_input(mod, "Socket_13", original_scene['max_z']
-)
-    utils.set_modifier_input(mod, "Socket_14", original_scene.frame_start
-)
+    utils.set_modifier_input(mod, "Socket_2", "VAT_UV", is_attribute_name=True)
+    utils.set_modifier_input(mod, "Socket_6", num_frames)
+    utils.set_modifier_input(mod, "Socket_7", height)
+    utils.set_modifier_input(mod, "Socket_9", image_result)
+    utils.set_modifier_input(mod, "Socket_3", original_scene['min_x'])
+    utils.set_modifier_input(mod, "Socket_4", original_scene['max_x'])
+    utils.set_modifier_input(mod, "Socket_10", original_scene['min_y'])
+    utils.set_modifier_input(mod, "Socket_11", original_scene['max_y'])
+    utils.set_modifier_input(mod, "Socket_12", original_scene['min_z'])
+    utils.set_modifier_input(mod, "Socket_13", original_scene['max_z'])
+    utils.set_modifier_input(mod, "Socket_14", original_scene.frame_start)
 
     bpy.ops.object.editmode_toggle()
     bpy.ops.object.editmode_toggle()
