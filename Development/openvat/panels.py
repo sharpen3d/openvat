@@ -78,8 +78,67 @@ class OBJECT_PT_VAT_OPTIONS(bpy.types.Panel):
             row.prop(settings, "clean_mesh", text="Strip Vertex Data", toggle=True) 
             row = layout.row()
             row.prop(settings, "rip_edges", toggle=True)
-        
-# Output Settings - relating to data being exported      
+
+class VAT_OT_AddAnimEntry(bpy.types.Operator):
+    bl_idname = "vat.add_anim_entry"
+    bl_label = "Add Animation"
+
+    def execute(self, context):
+        entry = context.scene.vat_anim_data.add()
+        entry.name = f"Anim{len(context.scene.vat_anim_data)}"
+        entry.start_frame = 1
+        entry.end_frame = 30
+        entry.framerate = 30
+        entry.looping = True
+        context.scene.vat_anim_index = len(context.scene.vat_anim_data) - 1
+        return {'FINISHED'}
+
+class VAT_OT_RemoveAnimEntry(bpy.types.Operator):
+    bl_idname = "vat.remove_anim_entry"
+    bl_label = "Remove Animation"
+
+    def execute(self, context):
+        idx = context.scene.vat_anim_index
+        data = context.scene.vat_anim_data
+        if data and 0 <= idx < len(data):
+            data.remove(idx)
+            context.scene.vat_anim_index = min(idx, len(data) - 1)
+        return {'FINISHED'}
+
+class VAT_UL_AnimList(bpy.types.UIList):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        layout.label(text=item.name)
+
+class VAT_PT_AnimDataPanel(bpy.types.Panel):
+    bl_label = "Animation Data"
+    bl_idname = "VAT_PT_anim_data_panel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "OpenVAT"
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene
+
+        row = layout.row()
+        row.template_list("VAT_UL_AnimList", "", scene, "vat_anim_data", scene, "vat_anim_index", rows=3)
+
+        col = row.column(align=True)
+        col.operator("vat.add_anim_entry", icon='ADD', text="")
+        col.operator("vat.remove_anim_entry", icon='REMOVE', text="")
+
+        # Edit selected animation data
+        if scene.vat_anim_data and 0 <= scene.vat_anim_index < len(scene.vat_anim_data):
+            entry = scene.vat_anim_data[scene.vat_anim_index]
+            layout.separator()
+            layout.prop(entry, "name")
+            layout.prop(entry, "start_frame")
+            layout.prop(entry, "end_frame")
+            layout.prop(entry, "framerate")
+            layout.prop(entry, "looping")
+
+
+# Output Settings - relating to data being exported
 class OBJECT_PT_VAT_OUTPUT(bpy.types.Panel):
     bl_idname = "OBJECT_PT_vat_output"
     bl_label = "OpenVAT Output"
@@ -214,4 +273,4 @@ class OBJECT_PT_VAT_OUTPUT(bpy.types.Panel):
                 row.label(text="Resolution calculated per batch object", icon="OUTLINER_OB_IMAGE")
                 
 
-classes = [OBJECT_PT_VAT_OPTIONS, OBJECT_PT_VAT_OUTPUT]
+classes = [OBJECT_PT_VAT_OPTIONS, OBJECT_PT_VAT_OUTPUT, VAT_OT_AddAnimEntry, VAT_OT_RemoveAnimEntry, VAT_UL_AnimList, VAT_PT_AnimDataPanel]

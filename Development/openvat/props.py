@@ -9,6 +9,13 @@ def make_dynamic_enum(idname):
         return base
     return callback
 
+class VATAnimEntry(bpy.types.PropertyGroup):
+    name: bpy.props.StringProperty(name="Name", default="Anim")
+    start_frame: bpy.props.IntProperty(name="Start Frame", default=1)
+    end_frame: bpy.props.IntProperty(name="End Frame", default=30)
+    framerate: bpy.props.IntProperty(name="Framerate", default=30, min=1)
+    looping: bpy.props.BoolProperty(name="Looping", default=True)
+
 class VATSettings(bpy.types.PropertyGroup):
     vat_output_directory: bpy.props.StringProperty(
         name="Output Directory",
@@ -189,4 +196,4 @@ class VATSettings(bpy.types.PropertyGroup):
     )
 
 
-classes = [VATSettings]
+classes = [VATSettings, VATAnimEntry]
